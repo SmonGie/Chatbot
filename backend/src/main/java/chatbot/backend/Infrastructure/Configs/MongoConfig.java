@@ -11,7 +11,7 @@ public class MongoConfig {
 
     @Bean
     public MongoClient mongoClient() {
-        String connectionString = "mongodb://root:rootpassword@localhost:27017/chatbotdb";
+        String connectionString = "mongodb://admin:password@localhost:27017/chatbotdb";
         return MongoClients.create(connectionString);
     }
 

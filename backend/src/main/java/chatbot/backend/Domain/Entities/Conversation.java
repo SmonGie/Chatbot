@@ -21,4 +21,11 @@ public class Conversation {
     private List<Message> messages;
     private Instant createdAt;
     private Instant endedAt;
+
+    public void sendMessage(Message message){
+        if (endedAt != null) {
+            throw new IllegalStateException("Conversation has already ended.");
+        }
+        this.messages.add(message);
+    }
 }
