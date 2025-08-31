@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -18,7 +19,7 @@ import java.util.List;
 public class Conversation {
     @Id
     private String id;
-    private List<Message> messages;
+    private List<Message> messages = new ArrayList<>();
     private Instant createdAt;
     private Instant endedAt;
 

@@ -15,6 +15,12 @@ public class ConversationController {
         this.conversationService = conversationService;
     }
 
+    @PostMapping("/start")
+    public ResponseEntity<Conversation> startConversation(){
+        Conversation conversation = conversationService.startConversation();
+        return ResponseEntity.ok(conversation);
+    }
+
     @PostMapping("/{conversationId}/messages")
     public ResponseEntity<Conversation> sendMessage(@PathVariable String conversationId,@RequestBody Message message){
         Conversation messages = conversationService.sendMessage(conversationId, message);
