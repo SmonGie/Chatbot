@@ -33,4 +33,9 @@ public class ConversationService {
         conversation.sendMessage(message);
         return conversationRepository.save(conversation);
     }
+
+    public Conversation getConversationById(String conversationId) {
+        return conversationRepository.findById(conversationId).orElse(null);
+    }
+
 }
