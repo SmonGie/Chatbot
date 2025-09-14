@@ -1,8 +1,8 @@
-package chatbot.backend.Application.Services;
+package chatbot.backend.application.services;
 
-import chatbot.backend.Domain.Entities.Conversation;
-import chatbot.backend.Domain.Entities.Message;
-import chatbot.backend.Domain.Repositories.IConversationRepository;
+import chatbot.backend.domain.entities.Conversation;
+import chatbot.backend.domain.entities.Message;
+import chatbot.backend.domain.repositories.IConversationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

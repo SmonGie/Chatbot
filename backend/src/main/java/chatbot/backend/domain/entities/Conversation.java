@@ -1,4 +1,4 @@
-package chatbot.backend.Domain.Entities;
+package chatbot.backend.domain.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package chatbot.backend.Domain.Enums;
+package chatbot.backend.domain.enums;
 
 public enum Sender {
     USER,

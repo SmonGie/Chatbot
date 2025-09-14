@@ -1,4 +1,4 @@
-package chatbot.backend.Infrastructure.Configs;
+package chatbot.backend.infrastructure.configs;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;

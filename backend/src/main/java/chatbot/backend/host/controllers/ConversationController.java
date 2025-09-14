@@ -1,13 +1,13 @@
-package chatbot.backend.Host.Controllers;
+package chatbot.backend.host.controllers;
 
-import chatbot.backend.Application.Services.ConversationService;
-import chatbot.backend.Domain.Entities.Conversation;
-import chatbot.backend.Domain.Entities.Message;
+import chatbot.backend.application.services.ConversationService;
+import chatbot.backend.domain.entities.Conversation;
+import chatbot.backend.domain.entities.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static chatbot.backend.Domain.Enums.Sender.BOT;
+import static chatbot.backend.domain.enums.Sender.BOT;
 
 @RestController
 @RequestMapping("/api/conversations")

@@ -1,4 +1,4 @@
-package chatbot.backend.Domain.Entities;
+package chatbot.backend.domain.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,9 +11,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FollowUpQuestion {
+@Document(collection = "feedbacks")
+public class Feedback {
     @Id
     private String id;
     private String messageId;
-    private String text;
+    private int rating;
+    private String comment; // Opcjonalny
 }

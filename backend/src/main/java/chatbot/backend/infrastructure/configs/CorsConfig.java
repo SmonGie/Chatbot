@@ -1,4 +1,4 @@
-package chatbot.backend.Infrastructure.Configs;
+package chatbot.backend.infrastructure.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

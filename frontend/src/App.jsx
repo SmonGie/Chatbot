@@ -18,12 +18,12 @@ function ChatWindow({ messages }) {
         endRef.current?.scrollIntoView({ behavior: "smooth" })
     }, [messages])
     return (
-        <div className="bg-gray-600 w-5/6 flex-grow rounded-lg shadow p-4 overflow-y-auto">
+        <div className="bg-gradient-to-b from-gray-600 to-gray-800 w-5/6 flex-grow rounded-xl shadow-lg p-6 overflow-y-auto">
             <div className="text-amber-50">
                 <ul>
-                    {messages.map((msg, i) => (
+                    {messages.map((msg) => (
                         <li
-                            key={i}
+                            key={msg.index}
                             className={`p-2 mb-3 rounded-lg max-w-xs bg-green-700 ${
                                 msg.sender === "USER"
                                     ? "bg-blue-500 text-white ml-auto"
@@ -42,7 +42,7 @@ function ChatWindow({ messages }) {
 function MessageForm({ input, setInput, handleSubmit }) {
     return (
         <form
-            className="w-full max-w-md mt-4 flex border rounded-r-lg rounded-l-lg"
+            className="w-full max-w-md mt-4 flex border border-gray-600 rounded-full shadow-sm"
             onSubmit={handleSubmit}
         >
             <input
@@ -50,11 +50,11 @@ function MessageForm({ input, setInput, handleSubmit }) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Napisz wiadomość..."
-                className="flex-grow p-2 text-amber-50"
+                className="flex-grow p-3 text-amber-50 bg-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-l-full transition"
             />
             <button
                 type="submit"
-                className="bg-blue-500 text-white px-4 hover:bg-blue-600 rounded-r-lg"
+                className="bg-blue-600 text-white px-4 hover:bg-blue-700 transition rounded-r-full"
             >
                 Wyślij
             </button>
@@ -64,7 +64,7 @@ function MessageForm({ input, setInput, handleSubmit }) {
 
 function Footer() {
     return (
-        <footer className="p-2 text-right text-sm text-shadow-black-500">
+        <footer className="p-2 text-center text-sm text-gray-400 bg-gray-900">
             © 2025 TUL Chatbot
         </footer>
     )
