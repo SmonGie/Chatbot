@@ -42,7 +42,7 @@ function ChatWindow({ messages }) {
 function MessageForm({ input, setInput, handleSubmit }) {
     return (
         <form
-            className="w-full max-w-md mt-4 flex border border-gray-600 rounded-full shadow-sm"
+            className="w-full max-w-md mt-4 flex border border-gray-600 rounded-full shadow-sm focus-within:border-blue-400 focus-within:ring-2"
             onSubmit={handleSubmit}
         >
             <input
@@ -50,11 +50,11 @@ function MessageForm({ input, setInput, handleSubmit }) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Napisz wiadomość..."
-                className="flex-grow p-3 text-amber-50 bg-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-l-full transition"
+                className="flex-grow p-3 text-amber-50 bg-gray-700 placeholder-gray-400 focus:outline-none rounded-l-full transition"
             />
             <button
                 type="submit"
-                className="bg-blue-600 text-white px-4 hover:bg-blue-700 transition rounded-r-full"
+                className="bg-blue-600 text-white px-4 hover:bg-blue-700 transition rounded-r-full focus:outline-none"
             >
                 Wyślij
             </button>
