@@ -27,4 +27,12 @@ public class Message {
         this.timestamp = Instant.now();
     }
 
+    public Message(Sender sender, String content) {
+        this.id = UUID.randomUUID().toString();
+
+        this.sender = sender;
+        this.content = content;
+        this.timestamp = Instant.now();
+    }
+
 }

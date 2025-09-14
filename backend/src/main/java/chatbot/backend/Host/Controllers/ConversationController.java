@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static chatbot.backend.Domain.Enums.Sender.BOT;
+
 @RestController
 @RequestMapping("/api/conversations")
 public class ConversationController {
@@ -20,6 +22,7 @@ public class ConversationController {
     @PostMapping("/start")
     public ResponseEntity<Conversation> startConversation(){
         Conversation conversation = conversationService.startConversation();
+        conversationService.sendMessage(conversation.getId(), new Message(BOT, "Cześć 👋, w czym mogę pomóc?"));
         return ResponseEntity.ok(conversation);
     }
 
