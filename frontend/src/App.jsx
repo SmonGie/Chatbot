@@ -13,7 +13,7 @@ function Header() {
 
 function QuestionBox({ text }) {
     return (
-        <div className="bg-gray-700 hover:bg-gray-600 text-white p-3 rounded-xl shadow-md cursor-pointer transition">
+        <div className="bg-gray-600 hover:bg-gray-500 text-white p-3 rounded-xl shadow-md cursor-pointer transition h-24 text-center flex items-center justify-center">
             {text}
         </div>
     );
@@ -27,7 +27,7 @@ function ChatWindow({ messages }) {
     }, [messages])
     return (
         <div className="bg-gradient-to-b from-gray-600 to-gray-800 w-5/6 flex-grow rounded-xl shadow-lg p-6 overflow-y-auto relative">
-            <div className="text-amber-50">
+            <div className="text-amber-50 pb-40">
                 <ul>
                     {messages.map((msg) => (
                         <li
@@ -43,8 +43,8 @@ function ChatWindow({ messages }) {
                     ))}
                 </ul>
             </div>
-            <div className="absolute bottom-4 left-0 w-full px-6">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+            <div className="absolute bottom-0 left-0 w-full px-8 py-8 bg-gray-800 box-border content-center shadow-[0_-4px_10px_rgba(0,0,0,0.4)]">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 text-center">
                     <QuestionBox text="Informacje o rekrutacji" />
                     <QuestionBox text="Kierunki studiów" />
                     <QuestionBox text="Kontakt z uczelnią" />
