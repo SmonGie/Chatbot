@@ -17,5 +17,5 @@ public class Feedback {
     private String id;
     private String messageId;
     private int rating;
-    private String comment; // Opcjonalny
+    private String comment;
 }

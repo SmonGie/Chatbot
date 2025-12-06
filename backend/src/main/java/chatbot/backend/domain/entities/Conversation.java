@@ -25,7 +25,7 @@ public class Conversation {
 
     public void sendMessage(Message message){
         if (endedAt != null) {
-            throw new IllegalStateException("Conversation has already ended.");
+            throw new IllegalStateException("Konwersacja się zakończyła.");
         }
         this.messages.add(message);
     }
