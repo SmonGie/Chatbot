@@ -10,12 +10,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration
 public class MongoConfig {
 
-    @Value("${spring.data.mongodb.uri}")
-    private String mongoUri;
-
     @Bean
     public MongoClient mongoClient() {
-        return MongoClients.create(mongoUri);
+        String connectionString = "mongodb://root:rootpassword@localhost:27017/chatbotdb?authSource=admin";
+        return MongoClients.create(connectionString);
     }
 
     @Bean

@@ -1,7 +1,8 @@
 spring:
   application:
    name: Backend
-
+  autoconfigure:
+    exclude: org.springframework.ai.vectorstore.qdrant.autoconfigure.QdrantVectorStoreAutoConfiguration
   ai:
     ollama:
       base-url: http://localhost:11434
@@ -15,12 +16,13 @@ spring:
     vectorstore:
       qdrant:
         host: localhost
-        port: 6333
+        port: 6334
         collection-name: chatbot_vectors
         initialize-schema: true
   data:
     mongodb:
-      uri: ${MONGODB_URI}
+      uri: mongodb://root:rootpassword@localhost:27017/chatbotdb?authSource=admin
+
 
 server:
   port: 8080
