@@ -1,15 +1,17 @@
 package chatbot.backend.application.services;
 
-import chatbot.backend.domain.entities.Conversation;
-import chatbot.backend.domain.entities.Message;
+import chatbot.backend.domain.entities.*;
 import chatbot.backend.domain.enums.Sender;
 import chatbot.backend.domain.repositories.IConversationRepository;
 import chatbot.backend.infrastructure.adapters.ChatbotGateway;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,30 +26,30 @@ public class ConversationService {
     }
 
     public Conversation startConversation(){
-        Conversation conversation = new Conversation();
+        Conversation conversation = ConversationFactory.createConversation();
         conversation.setCreatedAt(java.time.Instant.now());
         return conversationRepository.save(conversation);
     }
 
-    public Conversation endConversation(String conversationId){
+    public void endConversation(String conversationId){
         Conversation conversation = conversationRepository.findById(conversationId).orElseThrow();
         conversation.setEndedAt(java.time.Instant.now());
-        return conversationRepository.save(conversation);
+        conversationRepository.save(conversation);
     }
 
-    public Conversation sendMessage(String conversationId, Message message){
+    public void sendMessage(String conversationId, Message message){
         Conversation conversation = conversationRepository.findById(conversationId).orElseThrow();
         message.setConversationId(conversationId);
         conversation.sendMessage(message);
-        return conversationRepository.save(conversation);
+        conversationRepository.save(conversation);
     }
 
     public Conversation getConversationById(String conversationId) {
         return conversationRepository.findById(conversationId).orElse(null);
     }
 
-    public Flux<String> streamBotResponse(String conversationId, String userContent) {
-        Message userMessage = new Message(Sender.USER, userContent);
+    public Flux<String> streamBotResponse(String conversationId, String content) {
+        Message userMessage = MessageFactory.createUserMessage(content);
         userMessage.setConversationId(conversationId);
         sendMessage(conversationId, userMessage);
 
@@ -58,6 +60,7 @@ public class ConversationService {
         Jesteś Tulbotem, chatbotem odpowiadającym na pytania o Politechnice Łódzkiej.
         Odpowiadaj wyłącznie krótkimi, konkretnymi odpowiedziami.
         Nie dodawaj wyjaśnień, komentarzy ani dodatkowego tekstu.
+        Elementy listy zawsze dodawaj w nowej linii.
         """;
 
         String promptText = systemInstruction + "\n\n" + conversation.getMessages().stream()
@@ -90,12 +93,27 @@ public class ConversationService {
                     if (!buffer.isEmpty()) {
                         responseBuilder.append(buffer);
                     }
-                    Message botMessage = new Message(Sender.BOT, responseBuilder.toString());
+                    Message botMessage = MessageFactory.createBotMessage(responseBuilder.toString());
                     botMessage.setConversationId(conversationId);
-                    sendMessage(conversationId, botMessage);
 
                     return chatbotGateway.followups(responseBuilder.toString())
-                            .map(followups -> "data: {\"type\":\"followups\",\"options\":" + followups + "}\n\n")
+                            .map(followupsJson -> {
+                                ObjectMapper mapper = new ObjectMapper();
+                                List<String> followupStrings;
+                                try {
+                                    followupStrings = mapper.readValue(followupsJson, new TypeReference<List<String>>() {});
+                                } catch (Exception e) {
+                                    followupStrings = List.of();
+                                }
+
+                                List<FollowUpQuestion> followUpObjects = followupStrings.stream()
+                                        .map(f -> FollowUpQuestionFactory.create(botMessage.getId(), f))
+                                        .toList();
+
+                                botMessage.setFollowUpQuestions(followUpObjects);
+
+                                return "data: {\"type\":\"followups\",\"options\":" + followupsJson + "}\n\n";
+                            })
                             .onErrorReturn("data: {\"options\":[]}\n\n");
                 }))
                 .onErrorResume(err -> {

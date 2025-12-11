@@ -1,26 +1,12 @@
 package chatbot.backend.host.controllers;
 
 import chatbot.backend.application.services.ConversationService;
-import chatbot.backend.domain.entities.Conversation;
-import chatbot.backend.domain.entities.Message;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
-import reactor.core.scheduler.Schedulers;
 
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static chatbot.backend.domain.enums.Sender.BOT;
 
 @RestController
 @RequestMapping("/api/conversation")

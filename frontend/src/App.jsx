@@ -5,34 +5,44 @@ import ReactMarkdown from "react-markdown"
 function Header() {
     return (
         <header>
-            <h2 className="mt-5 mb-5 font-bold text-4xl text-center text-amber-50">
+            <h2 className="mt-5 mb-5 font-bold text-4xl text-center text-[#ffffff]">
                 Chatbot politechniki łódzkiej
             </h2>
         </header>
     )
 }
 
-function ChatWindow({ messages, followups, onFollowupClick }) {
+function ChatWindow({ messages, followups, onFollowupClick, isTyping }) {
     const endRef = useRef(null)
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: "smooth" })
-    }, [messages, followups])
+    }, [messages, followups, isTyping])
     return (
         <div className="bg-gradient-to-b from-gray-700 to-gray-600 w-5/6 flex-grow rounded-xl shadow-lg p-6 overflow-y-auto relative">
-            <ul className="text-amber-50 pb-40">
+            <ul className="pb-40">
+                <li className="p-3 space-y-5 rounded-lg text-lg max-w-3xl whitespace-normal bg-[#505050] text-[#ffffff] ml-auto mb-6">
+                    Jestem Tulbot, chatbot Politechniki Łódzkiej. W czym mogę Ci dzisiaj pomóc?
+                </li>
                 {messages.map((msg, idx) => (
                     <li
                         key={idx}
-                        className={`p-3 mb-3 rounded-lg max-w-3xl break-words ${
+                        className={`p-3 space-y-3 rounded-lg text-lg max-w-3xl whitespace-normal mb-6 ${
                             msg.sender === "BOT"
-                                ? "bg-blue-700 text-white ml-auto"
-                                : "bg-green-900 text-white mr-auto"
+                                ? "bg-[#505050] text-[#ffffff] ml-auto"
+                                : "bg-[#002147] text-[#ffffff] mr-auto"
                         }`}
                     >
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        <span>{msg.content}</span>
+                        {msg.sender === "BOT" && isTyping && idx === messages.length - 1 && (
+                            <div className="mt-1 flex items-center space-x-2">
+                                <span>Bot pisze</span>
+                                <TypingIndicator />
+                            </div>
+                        )}
                     </li>
                 ))}
+
 
                 {followups.length > 0 && (
                     <div className="mt-6 flex flex-wrap gap-3 justify-center">
@@ -40,7 +50,7 @@ function ChatWindow({ messages, followups, onFollowupClick }) {
                             <button
                                 key={i}
                                 onClick={() => onFollowupClick(q)}
-                                className="bg-gray-700 hover:bg-gray-600 text-amber-100 px-4 py-2 rounded-lg text-sm transition-all hover:scale-105 shadow-md"
+                                className="bg-[#ffc107] hover:bg-yellow-400 text-gray-900 px-4 py-2 rounded-lg transition-all hover:scale-103 shadow-md font-semibold text-lg"
                             >
                                 {q}
                             </button>
@@ -50,14 +60,6 @@ function ChatWindow({ messages, followups, onFollowupClick }) {
             </ul>
             <div ref={endRef} />
         </div>
-    )
-}
-
-function Footer() {
-    return (
-        <footer className="p-2 text-center text-sm text-gray-400 bg-gray-900">
-            © 2025 TUL Chatbot
-        </footer>
     )
 }
 
@@ -111,14 +113,15 @@ function App() {
                 } else if (data.length > 0) {
                     setMessages((prev) => {
                         const last = prev[prev.length - 1];
+                        const chunk = data + " ";
                         if (last && last.sender === "BOT") {
                             return [
                                 ...prev.slice(0, -1),
-                                { ...last, content: last.content + data }
+                                { ...last, content: last.content + chunk }
                             ];
 
                         } else {
-                            return [...prev, { sender: "BOT", content: data }];
+                            return [...prev, { sender: "BOT", content: chunk }];
                         }
                     });
                 }
@@ -134,13 +137,14 @@ function App() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-gray-900">
+        <div className="min-h-screen flex flex-col bg-[#002147]">
             <Header />
             <main className="flex flex-col items-center flex-grow pb-4 w-full">
                 <ChatWindow
                     messages={messages}
                     followups={followups}
                     onFollowupClick={handleFollowupClick}
+                    isTyping={isLoading}
                 />
                 <div className="w-5/6 flex mt-4">
                     <input
@@ -149,7 +153,7 @@ function App() {
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
                         disabled={isLoading}
-                        className="flex-grow p-3 rounded-l-lg border-none outline-none bg-gray-700 text-white placeholder-gray-400 disabled:opacity-50"
+                        className="flex-grow p-4 text-lg rounded-l-lg border-none outline-none bg-gray-200 text-[#2f2e31] placeholder-[#2f2e31] disabled:opacity-50"
                         placeholder={isLoading ? "Bot pisze..." : "Wpisz wiadomość..."}
                     />
                     <button
@@ -164,6 +168,24 @@ function App() {
             <Footer />
         </div>
     );
+}
+
+function TypingIndicator() {
+    return (
+        <div className="flex space-x-1 ml-2">
+            <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-0"></span>
+            <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-150"></span>
+            <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-300"></span>
+        </div>
+    )
+}
+
+function Footer() {
+    return (
+        <footer className="p-2 text-center text-sm text-white bg-gray-900">
+            © 2025 TUL Chatbot
+        </footer>
+    )
 }
 
 export default App
