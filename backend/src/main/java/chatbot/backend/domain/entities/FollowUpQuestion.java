@@ -14,5 +14,5 @@ public class FollowUpQuestion {
     @Id
     private String id;
     private String messageId;
-    private String text;
+    private String content;
 }
