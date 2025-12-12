@@ -10,6 +10,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,7 +61,6 @@ public class ConversationService {
         Jesteś Tulbotem, chatbotem odpowiadającym na pytania o Politechnice Łódzkiej.
         Odpowiadaj wyłącznie krótkimi, konkretnymi odpowiedziami.
         Nie dodawaj wyjaśnień, komentarzy ani dodatkowego tekstu.
-        Elementy listy zawsze dodawaj w nowej linii.
         """;
 
         String promptText = systemInstruction + "\n\n" + conversation.getMessages().stream()
@@ -95,6 +95,7 @@ public class ConversationService {
                     }
                     Message botMessage = MessageFactory.createBotMessage(responseBuilder.toString());
                     botMessage.setConversationId(conversationId);
+                    conversation.sendMessage(botMessage);
 
                     return chatbotGateway.followups(responseBuilder.toString())
                             .map(followupsJson -> {
@@ -116,6 +117,10 @@ public class ConversationService {
                             })
                             .onErrorReturn("data: {\"options\":[]}\n\n");
                 }))
+                .publishOn(Schedulers.boundedElastic())
+                .doFinally(signalType -> {
+                    conversationRepository.save(conversation);
+                })
                 .onErrorResume(err -> {
                     System.err.println("Streaming error: " + err.getMessage());
                     return Flux.just("ERROR: " + err.getMessage());
