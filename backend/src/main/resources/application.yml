@@ -1,8 +1,8 @@
 spring:
   application:
    name: Backend
-  autoconfigure:
-    exclude: org.springframework.ai.vectorstore.qdrant.autoconfigure.QdrantVectorStoreAutoConfiguration
+#  autoconfigure:
+#    exclude: org.springframework.ai.vectorstore.qdrant.autoconfigure.QdrantVectorStoreAutoConfiguration
   ai:
     ollama:
       base-url: http://localhost:11434
@@ -13,6 +13,8 @@ spring:
       chat:
         options:
           model: speakleash/bielik-11b-v2.3-instruct:Q4_K_M
+      embedding:
+        model: nomic-embed-text
     vectorstore:
       qdrant:
         host: localhost

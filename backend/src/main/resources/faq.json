@@ -1,0 +1,54 @@
+[
+  {
+    "question": "Jak dojechać na Politechnikę Łódzką?",
+    "answer": "Najlepiej komunikacją miejską: tramwajem lub autobusem, przystanek Politechnika Łódzka."
+  },
+  {
+    "question": "W jakich godzinach jest otwarta biblioteka Politechniki Łódzkiej",
+    "answer": "Biblioteka jest otwarta od poniedziałku do piątku w godzinach 8:00-20:00."
+  },
+  {
+    "question": "Jak zapisać się na kurs języka angielskiego?",
+    "answer": "Nie ma możliwości zapisania się na kurs."
+  },
+  {
+    "question": "Czy kurs z języka angielskiego jest obowiązkowy?",
+    "answer": "Zgodnie z Uchwałą Senatu PŁ Nr 20/2020 z dnia 20 kwietnia 2020r.\nw programach studiów I stopnia określa się zajęcia z języka obcego zaczynające się od 2 semestru studiów w wymiarze 120 godzin (przez 4 semestry), którym przypisuje się 9 punktów ECTS, w tym egzamin potwierdzający osiągnięcie poziomu B2 umiejętności językowych; dopuszcza się przeprowadzenie certyfikacji językowej stanowiącej jednocześnie egzamin potwierdzający osiągnięcie poziomu B2 umiejętności językowych za zgodą i na wniosek studenta.."
+  },
+  {
+    "question": "Gdzie znajdują się stołówki uczelni?",
+    "answer": "Na terenie politechniki łodzkiej znajduje się Bufet na kampusie B, więcej informacji możemy uzyskąć, korzystając z interaktywnej mapy Politechniki Łódzkiej dostępnej na stronie https://mapa.p.lodz.pl"
+  },
+  {
+    "question": "Jak uzyskać zaświadczenie o studiowaniu?",
+    "answer": "Zaświadczenie można pobrać osobiście w dziekanacie Należy przygotować legitymację, która potwierdza nasze dane osobowe."
+  },
+  {
+    "question": "Jakie wydziały są na Politechnice Łódzkiej?",
+    "answer":"Na politechnice łódzkiej mamy następujące wydziały: Wydział Mechaniczny,\nWydział Elektrotechniki,\nElektroniki,\nInformatyki i Automatyki,\nWydział Chemiczny,\nWydział Włókiennictwa i Wzornictwa,\nWydział Biotechnologii i Nauk o Żywności,\nWydział Budownictwa,\nArchitektury i Inżynierii Środowiska,\nWydział Fizyki Technicznej,\nInformatyki i Matematyki Stosowanej,\nWydział Organizacji i Zarządzania,\nWydział Inżynierii Procesowej i Ochrony Środowiska"
+  },
+  {
+    "question":"Ile wynosi opłata rekrutacyjna?",
+    "answer":"Opłata rekrutacyjna wynosi 65 zł za kierunek"
+  },
+  {
+    "question":"Czy w razie odrzucenia aplikacji na kierunek pieniądze zapłacone podczas rekrutacji są zwracane?",
+    "answer":"Nie, opłata pobierana podczas rekrutacji nie jest zwracana"
+  },
+  {
+    "question":"Czy istnieje możliwość zobaczenia mapy kampusu?",
+    "answer":"Tak, mapa kampusu jest dostępna na stronie https://mapa.p.lodz.pl"
+  },
+  {
+    "question":"Jak aplikować na Politechnikę Łódzką?",
+    "answer":"Aplikować na politechnikę Łódzką można na stronie https://rekrutacja.p.lodz.pl"
+  },
+  {
+    "question":"Czym są punkty ECTS?",
+    "answer":"Punkty ECTS, czyli Europejski System Transferu Punktów, to międzynarodowy standard służący porównywaniu osiągnięć akademickich studentów w całej Europie. Punkty ECTS umożliwiają łatwy transfer i akumulację punktów zdobytych na różnych uczelniach, zarówno uczelni macierzystej, jak i uczelni zagranicznej. Każdemu przedmiotowi przypisana jest określona liczba punktów ECTS, która odzwierciedla nakład pracy studenta potrzebny do uzyskania zakładanych efektów kształcenia. Na przykład, aby zaliczyć semestr, student musi zdobyć 30 punktów ECTS, co zwykle oznacza około 750-900 godzin pracy."
+  },
+  {
+    "question": "Kim jesteś",
+    "answer": "Nazywam się Tulbot i moim zadaniem jest odpowiadanie na pytanie, dotyczące Politechniki Łódzkiej. Jeśli masz jakieś pytania, to śmiało je zadawaj"
+  }
+]
