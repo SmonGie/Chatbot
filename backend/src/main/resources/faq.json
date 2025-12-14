@@ -1,54 +1,67 @@
 [
   {
-    "question": "Jak dojechać na Politechnikę Łódzką?",
-    "answer": "Najlepiej komunikacją miejską: tramwajem lub autobusem, przystanek Politechnika Łódzka."
+    "pytanie": "Jak dojechać na Politechnikę Łódzką?",
+    "odpowiedz": "Najlepiej komunikacją miejską: tramwajem lub autobusem. Należy wysiąść na przystanku Politechnika Łódzka.",
+    "typ": "dojazd_i_lokalizacja"
   },
   {
-    "question": "W jakich godzinach jest otwarta biblioteka Politechniki Łódzkiej",
-    "answer": "Biblioteka jest otwarta od poniedziałku do piątku w godzinach 8:00-20:00."
+    "pytanie": "W jakich godzinach jest otwarta biblioteka Politechniki Łódzkiej?",
+    "odpowiedz": "Biblioteka Politechniki Łódzkiej jest otwarta od poniedziałku do piątku w godzinach 8:00–20:00.",
+    "typ": "godziny_otwarcia"
   },
   {
-    "question": "Jak zapisać się na kurs języka angielskiego?",
-    "answer": "Nie ma możliwości zapisania się na kurs."
+    "pytanie": "Jak zapisać się na kurs języka angielskiego?",
+    "odpowiedz": "Nie ma możliwości zapisania się na kurs języka angielskiego.",
+    "typ": "jezyki_obce"
   },
   {
-    "question": "Czy kurs z języka angielskiego jest obowiązkowy?",
-    "answer": "Zgodnie z Uchwałą Senatu PŁ Nr 20/2020 z dnia 20 kwietnia 2020r.\nw programach studiów I stopnia określa się zajęcia z języka obcego zaczynające się od 2 semestru studiów w wymiarze 120 godzin (przez 4 semestry), którym przypisuje się 9 punktów ECTS, w tym egzamin potwierdzający osiągnięcie poziomu B2 umiejętności językowych; dopuszcza się przeprowadzenie certyfikacji językowej stanowiącej jednocześnie egzamin potwierdzający osiągnięcie poziomu B2 umiejętności językowych za zgodą i na wniosek studenta.."
+    "pytanie": "Czy kurs z języka angielskiego jest obowiązkowy?",
+    "odpowiedz": "Zgodnie z Uchwałą Senatu PŁ Nr 20/2020 z dnia 20 kwietnia 2020r.\\nw programach studiów I stopnia określa się zajęcia z języka obcego zaczynające się od 2 semestru studiów w wymiarze 120 godzin (przez 4 semestry), którym przypisuje się 9 punktów ECTS, w tym egzamin potwierdzający osiągnięcie poziomu B2 umiejętności językowych; dopuszcza się przeprowadzenie certyfikacji językowej stanowiącej jednocześnie egzamin potwierdzający osiągnięcie poziomu B2 umiejętności językowych za zgodą i na wniosek studenta.",
+    "typ": "regulaminy_studiow"
   },
   {
-    "question": "Gdzie znajdują się stołówki uczelni?",
-    "answer": "Na terenie politechniki łodzkiej znajduje się Bufet na kampusie B, więcej informacji możemy uzyskąć, korzystając z interaktywnej mapy Politechniki Łódzkiej dostępnej na stronie https://mapa.p.lodz.pl"
+    "pytanie": "Gdzie znajdują się stołówki uczelni?",
+    "odpowiedz": "Na terenie Politechniki Łódzkiej znajduje się bufet na kampusie B. Szczegółowe informacje dostępne są na interaktywnej mapie uczelni pod adresem https://mapa.p.lodz.pl.",
+    "typ": "uslugi_uczelni"
   },
   {
-    "question": "Jak uzyskać zaświadczenie o studiowaniu?",
-    "answer": "Zaświadczenie można pobrać osobiście w dziekanacie Należy przygotować legitymację, która potwierdza nasze dane osobowe."
+    "pytanie": "Jak uzyskać zaświadczenie o studiowaniu?",
+    "odpowiedz": "Zaświadczenie o studiowaniu można uzyskać osobiście w dziekanacie. Należy posiadać legitymację studencką potwierdzającą dane osobowe.",
+    "typ": "sprawy_administracyjne"
   },
   {
-    "question": "Jakie wydziały są na Politechnice Łódzkiej?",
-    "answer":"Na politechnice łódzkiej mamy następujące wydziały: Wydział Mechaniczny,\nWydział Elektrotechniki,\nElektroniki,\nInformatyki i Automatyki,\nWydział Chemiczny,\nWydział Włókiennictwa i Wzornictwa,\nWydział Biotechnologii i Nauk o Żywności,\nWydział Budownictwa,\nArchitektury i Inżynierii Środowiska,\nWydział Fizyki Technicznej,\nInformatyki i Matematyki Stosowanej,\nWydział Organizacji i Zarządzania,\nWydział Inżynierii Procesowej i Ochrony Środowiska"
+    "pytanie": "Jakie wydziały są na Politechnice Łódzkiej?",
+    "odpowiedz": "Na Politechnice Łódzkiej funkcjonują m.in. Wydział Mechaniczny, Wydział Elektrotechniki, Elektroniki, Informatyki i Automatyki, Wydział Chemiczny, Wydział Włókiennictwa i Wzornictwa, Wydział Biotechnologii i Nauk o Żywności, Wydział Budownictwa, Architektury i Inżynierii Środowiska, Wydział Fizyki Technicznej, Informatyki i Matematyki Stosowanej, Wydział Organizacji i Zarządzania oraz Wydział Inżynierii Procesowej i Ochrony Środowiska.",
+    "typ": "wydzialy"
   },
   {
-    "question":"Ile wynosi opłata rekrutacyjna?",
-    "answer":"Opłata rekrutacyjna wynosi 65 zł za kierunek"
+    "pytanie": "Ile wynosi opłata rekrutacyjna?",
+    "odpowiedz": "Opłata rekrutacyjna wynosi 65 zł za każdy wybrany kierunek studiów.",
+    "typ": "rekrutacja_oplaty"
   },
   {
-    "question":"Czy w razie odrzucenia aplikacji na kierunek pieniądze zapłacone podczas rekrutacji są zwracane?",
-    "answer":"Nie, opłata pobierana podczas rekrutacji nie jest zwracana"
+    "pytanie": "Czy w razie odrzucenia aplikacji na kierunek opłata rekrutacyjna jest zwracana?",
+    "odpowiedz": "Nie, opłata rekrutacyjna nie podlega zwrotowi w przypadku odrzucenia aplikacji.",
+    "typ": "rekrutacja_oplaty"
   },
   {
-    "question":"Czy istnieje możliwość zobaczenia mapy kampusu?",
-    "answer":"Tak, mapa kampusu jest dostępna na stronie https://mapa.p.lodz.pl"
+    "pytanie": "Czy istnieje możliwość zobaczenia mapy kampusu?",
+    "odpowiedz": "Tak, mapa kampusu Politechniki Łódzkiej jest dostępna na stronie https://mapa.p.lodz.pl.",
+    "typ": "dojazd_i_lokalizacja"
   },
   {
-    "question":"Jak aplikować na Politechnikę Łódzką?",
-    "answer":"Aplikować na politechnikę Łódzką można na stronie https://rekrutacja.p.lodz.pl"
+    "pytanie": "Jak aplikować na Politechnikę Łódzką?",
+    "odpowiedz": "Rekrutacja na Politechnikę Łódzką odbywa się za pośrednictwem systemu dostępnego na stronie https://rekrutacja.p.lodz.pl.",
+    "typ": "rekrutacja_procedury"
   },
   {
-    "question":"Czym są punkty ECTS?",
-    "answer":"Punkty ECTS, czyli Europejski System Transferu Punktów, to międzynarodowy standard służący porównywaniu osiągnięć akademickich studentów w całej Europie. Punkty ECTS umożliwiają łatwy transfer i akumulację punktów zdobytych na różnych uczelniach, zarówno uczelni macierzystej, jak i uczelni zagranicznej. Każdemu przedmiotowi przypisana jest określona liczba punktów ECTS, która odzwierciedla nakład pracy studenta potrzebny do uzyskania zakładanych efektów kształcenia. Na przykład, aby zaliczyć semestr, student musi zdobyć 30 punktów ECTS, co zwykle oznacza około 750-900 godzin pracy."
+    "pytanie": "Czym są punkty ECTS?",
+    "odpowiedz": "Punkty ECTS to element Europejskiego Systemu Transferu i Akumulacji Punktów, który umożliwia porównywanie osiągnięć studentów w całej Europie. Liczba punktów przypisana do przedmiotu odzwierciedla nakład pracy studenta potrzebny do osiągnięcia efektów kształcenia. Standardowo jeden semestr studiów odpowiada 30 punktom ECTS.",
+    "typ": "definicje"
   },
   {
-    "question": "Kim jesteś",
-    "answer": "Nazywam się Tulbot i moim zadaniem jest odpowiadanie na pytanie, dotyczące Politechniki Łódzkiej. Jeśli masz jakieś pytania, to śmiało je zadawaj"
+    "pytanie": "Kim jesteś?",
+    "odpowiedz": "Nazywam się Tulbot. Moim zadaniem jest odpowiadanie na pytania dotyczące Politechniki Łódzkiej i pomaganie w uzyskaniu najważniejszych informacji.",
+    "typ": "Tulbot"
   }
 ]

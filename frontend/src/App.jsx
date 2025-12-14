@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import "./App.css"
-import ReactMarkdown from "react-markdown"
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 function Header() {
     return (
@@ -33,7 +34,22 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping }) {
                                 : "bg-[#002147] text-[#ffffff] mr-auto"
                         }`}
                     >
-                        <span>{msg.content}</span>
+                        {msg.sender === "BOT" ? (
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: DOMPurify.sanitize(
+                                        marked.parse(msg.content, {
+                                            breaks: true,
+                                            mangle: false,
+                                            headerIds: false
+                                        })
+                                    )
+                                }}
+                            />
+                        ):(
+                            <span>{msg.content}</span>
+                        )}
+
                         {msg.sender === "BOT" && isTyping && idx === messages.length - 1 && (
                             <div className="mt-1 flex items-center space-x-2">
                                 <span>Bot pisze</span>
@@ -113,15 +129,15 @@ function App() {
                 } else if (data.length > 0) {
                     setMessages((prev) => {
                         const last = prev[prev.length - 1];
-                        const chunk = data + " ";
+
                         if (last && last.sender === "BOT") {
                             return [
                                 ...prev.slice(0, -1),
-                                { ...last, content: last.content + chunk }
+                                { ...last, content: last.content + data }
                             ];
 
                         } else {
-                            return [...prev, { sender: "BOT", content: chunk }];
+                            return [...prev, { sender: "BOT", content: data }];
                         }
                     });
                 }

@@ -4,8 +4,6 @@ import chatbot.backend.domain.entities.*;
 import chatbot.backend.domain.enums.Sender;
 import chatbot.backend.domain.repositories.IConversationRepository;
 import chatbot.backend.infrastructure.adapters.ChatbotGateway;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -64,30 +62,53 @@ public class ConversationService {
         String systemInstruction =
         """
         Jesteś Tulbotem, chatbotem odpowiadającym na pytania o Politechnice Łódzkiej.
-        Odpowiadaj wyłącznie krótkimi, konkretnymi odpowiedziami.
-        Nie dodawaj wyjaśnień, komentarzy ani dodatkowego tekstu.
-        Nie powtarzaj pytań użytkownika ani historii czatu.
-        Jeśli pytanie nie dotyczy Politechniki Łódzkiej, grzecznie o tym poinformuj i zaproponuj
-        zadanie pytania związanego z Politechniką Łódzką.
+        Odpowiadaj wyłącznie krótko i konkretnie.
+        Nie cytuj pytania użytkownika.
+        Nie odwołuj się do FAQ, dokumentów ani kontekstu.
+        Jeśli brak informacji, poinformuj o tym wprost.
+        Jeśli pytanie nie dotyczy Politechniki Łódzkiej, grzecznie o tym poinformuj.
         """;
 
         List<Document> similarDocs = vectorStore.similaritySearch(
                 SearchRequest.builder()
                         .query(content)
-                        .topK(3)
+                        .topK(5)
                         .similarityThreshold(0.5)
                         .build()
         );
 
-        String faqsContext = similarDocs.stream()
-                .map(d -> "FAQ: " + d.getMetadata().get("question") + "\n" + d.getText())
-                .collect(Collectors.joining("\n\n"));
+        String faqsContext = similarDocs.isEmpty() ? "Brak dostępnych informacji w bazie wiedzy." : similarDocs.stream()
+                .map(d ->
+                    """
+                    [INFORMACJA]
+                    %s
+                    """.formatted(d.getText()))
+                .collect(Collectors.joining("\n"));
 
-//        String promptText = systemInstruction + "\n\n" + faqsContext +"\n\n" + conversation.getMessages().stream()
-//                .map(m -> (m.getSender() == Sender.BOT ? "Tulbot: " : "Użytkownik: ") + m.getContent())
-//                .collect(Collectors.joining("\n"));
-        String promptText = systemInstruction + "\n\n" + faqsContext + "\n\n"
-                + "Pytanie użytkownika: " + content + "\nTulbot:";
+        String shortHistory = conversation.getMessages().stream()
+                .skip(Math.max(0, conversation.getMessages().size() - 3))
+                .map(m -> m.getSender() == Sender.BOT
+                        ? "Tulbot odpowiedział: " + m.getContent()
+                        : "Użytkownik zapytał: " + m.getContent())
+                .collect(Collectors.joining("\n"));
+
+        String promptText = """
+        %s
+        
+        Kontekst rozmowy:
+        %s
+        
+        Dostępne informacje (FAQ):
+        %s
+        
+        Aktualne pytanie użytkownika:
+        %s
+        
+        Odpowiedz WYŁĄCZNIE na aktualne pytanie.
+        Nie cytuj pytania.
+        Nie streszczaj kontekstu.
+        """.formatted(systemInstruction, shortHistory, faqsContext, content);
+
         Prompt prompt = new Prompt(promptText);
 
         StringBuilder responseBuilder = new StringBuilder();
@@ -96,56 +117,49 @@ public class ConversationService {
         return chatbotGateway.response(prompt)
                 .flatMap(chunk -> {
                     buffer.append(chunk);
-                    int sentenceEnd = Math.max(Math.max(buffer.lastIndexOf("."), buffer.lastIndexOf("!")), buffer.lastIndexOf("?"));
-                    if (sentenceEnd != -1) {
-                        String toSend = buffer.substring(0, sentenceEnd + 1);
-                        buffer.delete(0, sentenceEnd + 1);
-                        responseBuilder.append(toSend);
-                        return Flux.just("data: " + toSend + "\n\n");
-                    }
-                    if (buffer.length() > 100) {
+
+                    if (buffer.length() >= 120) {
                         String toSend = buffer.toString();
                         buffer.setLength(0);
                         responseBuilder.append(toSend);
+
                         return Flux.just("data: " + toSend + "\n\n");
                     }
+
                     return Flux.empty();
                 })
                 .concatWith(Flux.defer(() -> {
+                    Flux<String> finalText = Flux.empty();
+
                     if (!buffer.isEmpty()) {
-                        responseBuilder.append(buffer);
+                        String remainingData = buffer.toString();
+                        buffer.setLength(0);
+                        responseBuilder.append(remainingData);
+
+                        finalText = Flux.just("data: " + remainingData + "\n\n");
                     }
+
                     Message botMessage = MessageFactory.createBotMessage(responseBuilder.toString());
                     botMessage.setConversationId(conversationId);
                     conversation.sendMessage(botMessage);
 
-                    String followupPrompt = "Na podstawie poniższych FAQ i ostatniej odpowiedzi bota, zaproponuj 3 możliwe kolejne pytania użytkownika:\n\n"
-                            + faqsContext + "\n\nOdpowiedź bota: " + responseBuilder.toString();
+                    String followupPrompt = "Zaproponuj dokładnie 3 krótkie pytania,\n" +
+                            "które logicznie wynikają z odpowiedzi bota\n" +
+                            "i dotyczą Politechniki Łódzkiej.\n" +
+                            "Nie powtarzaj pytania użytkownika.\n" +
+                            "Zwróć wyłącznie tablicę JSON stringów:\n\n" +
+                            "\n\nOdpowiedź bota: " + responseBuilder;
 
-                    return chatbotGateway.followups(followupPrompt)
-                            .map(followupsJson -> {
-                                ObjectMapper mapper = new ObjectMapper();
-                                List<String> followupStrings;
-                                try {
-                                    followupStrings = mapper.readValue(followupsJson, new TypeReference<List<String>>() {});
-                                } catch (Exception e) {
-                                    followupStrings = List.of();
-                                }
+                    Flux<String> followups = chatbotGateway.followups(followupPrompt)
+                            .map(followupsJson ->
+                                    "data: {\"type\":\"followups\",\"options\":" + followupsJson + "}\n\n"
+                            )
+                            .onErrorReturn("data: {\"type\":\"followups\",\"options\":[]}\n\n");
 
-                                List<FollowUpQuestion> followUpObjects = followupStrings.stream()
-                                        .map(f -> FollowUpQuestionFactory.create(botMessage.getId(), f))
-                                        .toList();
-
-                                botMessage.setFollowUpQuestions(followUpObjects);
-
-                                return "data: {\"type\":\"followups\",\"options\":" + followupsJson + "}\n\n";
-                            })
-                            .onErrorReturn("data: {\"options\":[]}\n\n");
+                    return Flux.concat(finalText, followups);
                 }))
                 .publishOn(Schedulers.boundedElastic())
-                .doFinally(signalType -> {
-                    conversationRepository.save(conversation);
-                })
+                .doFinally(_ -> conversationRepository.save(conversation))
                 .onErrorResume(err -> {
                     System.err.println("Streaming error: " + err.getMessage());
                     return Flux.just("ERROR: " + err.getMessage());
@@ -154,8 +168,8 @@ public class ConversationService {
 
     public Flux<String> startAndStreamBotResponse(String userContent) {
         Conversation conversation = startConversation();
-        String idChunk = "data: {\"type\":\"conversationId\",\"id\":\"" + conversation.getId() + "\"}\n\n";
-        return Flux.concat(Flux.just(idChunk), streamBotResponse(conversation.getId(), userContent));
+        String id = "data: {\"type\":\"conversationId\",\"id\":\"" + conversation.getId() + "\"}\n\n";
+        return Flux.concat(Flux.just(id), streamBotResponse(conversation.getId(), userContent));
     }
 
 }

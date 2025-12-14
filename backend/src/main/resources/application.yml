@@ -12,7 +12,9 @@ spring:
         max-retries: 0
       chat:
         options:
-          model: speakleash/bielik-11b-v2.3-instruct:Q4_K_M
+          model: SpeakLeash/bielik-4.5b-v3.0-instruct:Q8_0
+          temperature: 0.20
+          top_p: 0.9
       embedding:
         model: nomic-embed-text
     vectorstore:

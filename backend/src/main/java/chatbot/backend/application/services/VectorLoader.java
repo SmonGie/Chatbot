@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -14,8 +13,11 @@ import java.util.Map;
 
 @Service
 public class VectorLoader {
-    @Autowired
-    private VectorStore vectorStore;
+    private final VectorStore vectorStore;
+
+    public VectorLoader(VectorStore vectorStore) {
+        this.vectorStore = vectorStore;
+    }
 
     @PostConstruct
     public void loadFAQs() {
@@ -23,7 +25,8 @@ public class VectorLoader {
         try (InputStream is = getClass().getResourceAsStream("/faq.json")) {
             List<Map<String, String>> faqs = mapper.readValue(is, new TypeReference<>() {});
             List<Document> documents = faqs.stream()
-                    .map(f -> new Document(f.get("answer"), Map.of("question", f.get("question"))))
+                    .map(faq -> new Document(faq.get("odpowiedz"), Map.of("pytanie", faq.get("pytanie"),
+                            "typ", faq.get("typ"))))
                     .toList();
             vectorStore.add(documents);
         } catch (Exception e) {
