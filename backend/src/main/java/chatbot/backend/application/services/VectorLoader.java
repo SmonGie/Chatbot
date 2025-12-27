@@ -25,7 +25,7 @@ public class VectorLoader {
         try (InputStream is = getClass().getResourceAsStream("/faq.json")) {
             List<Map<String, String>> faqs = mapper.readValue(is, new TypeReference<>() {});
             List<Document> documents = faqs.stream()
-                    .map(faq -> new Document(faq.get("odpowiedz"), Map.of("pytanie", faq.get("pytanie"),
+                    .map(faq -> new Document( faq.get("pytanie") + "\n" + faq.get("odpowiedz"), Map.of("pytanie", faq.get("pytanie"),
                             "typ", faq.get("typ"))))
                     .toList();
             vectorStore.add(documents);

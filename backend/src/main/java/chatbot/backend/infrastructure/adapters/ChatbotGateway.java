@@ -6,4 +6,5 @@ import reactor.core.publisher.Flux;
 public interface ChatbotGateway {
     Flux<String> response(Prompt prompt);
     Flux<String> followups(String answer);
+    String rewrite(String query, String context);
 }

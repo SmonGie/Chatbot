@@ -18,17 +18,11 @@ public class Message {
     private Sender sender;
     private String content;
     private Instant timestamp;
-    private List<FollowUpQuestion> followUpQuestions;
 
     Message(Sender sender, String content) {
         this.id = UUID.randomUUID().toString();
         this.sender = sender;
         this.content = content;
         this.timestamp = Instant.now();
-        this.followUpQuestions = new ArrayList<>();
-    }
-
-    public Sender getRole() {
-        return sender;
     }
 }

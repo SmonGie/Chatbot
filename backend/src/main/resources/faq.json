@@ -1,7 +1,7 @@
 [
   {
     "pytanie": "Jak dojechać na Politechnikę Łódzką?",
-    "odpowiedz": "Najlepiej komunikacją miejską: tramwajem lub autobusem. Należy wysiąść na przystanku Politechnika Łódzka.",
+    "odpowiedz": "Aby dojechać na Politechnikę Łódzką najlepiej skorzystać z komunikacji miejskiej: tramwaju lub autobusu. Należy wysiąść na przystanku Politechnika Łódzka.",
     "typ": "dojazd_i_lokalizacja"
   },
   {
@@ -10,18 +10,13 @@
     "typ": "godziny_otwarcia"
   },
   {
-    "pytanie": "Jak zapisać się na kurs języka angielskiego?",
-    "odpowiedz": "Nie ma możliwości zapisania się na kurs języka angielskiego.",
-    "typ": "jezyki_obce"
-  },
-  {
     "pytanie": "Czy kurs z języka angielskiego jest obowiązkowy?",
     "odpowiedz": "Zgodnie z Uchwałą Senatu PŁ Nr 20/2020 z dnia 20 kwietnia 2020r.\\nw programach studiów I stopnia określa się zajęcia z języka obcego zaczynające się od 2 semestru studiów w wymiarze 120 godzin (przez 4 semestry), którym przypisuje się 9 punktów ECTS, w tym egzamin potwierdzający osiągnięcie poziomu B2 umiejętności językowych; dopuszcza się przeprowadzenie certyfikacji językowej stanowiącej jednocześnie egzamin potwierdzający osiągnięcie poziomu B2 umiejętności językowych za zgodą i na wniosek studenta.",
     "typ": "regulaminy_studiow"
   },
   {
     "pytanie": "Gdzie znajdują się stołówki uczelni?",
-    "odpowiedz": "Na terenie Politechniki Łódzkiej znajduje się bufet na kampusie B. Szczegółowe informacje dostępne są na interaktywnej mapie uczelni pod adresem https://mapa.p.lodz.pl.",
+    "odpowiedz": "Szczegółowe informacje o rozmieszczeniu budynków Politechniki Łódzkiej dostępne są na interaktywnej mapie uczelni pod adresem https://mapa.p.lodz.pl.",
     "typ": "uslugi_uczelni"
   },
   {
@@ -36,7 +31,7 @@
   },
   {
     "pytanie": "Ile wynosi opłata rekrutacyjna?",
-    "odpowiedz": "Opłata rekrutacyjna wynosi 65 zł za każdy wybrany kierunek studiów.",
+    "odpowiedz": "Opłata rekrutacyjna wynosi 150 zł – na kierunki: architektura, wzornictwo, inżynieria wzornictwa przemysłowego;\n85 zł – na pozostałe kierunki studiów pierwszego oraz drugiego stopnia.",
     "typ": "rekrutacja_oplaty"
   },
   {
@@ -63,5 +58,686 @@
     "pytanie": "Kim jesteś?",
     "odpowiedz": "Nazywam się Tulbot. Moim zadaniem jest odpowiadanie na pytania dotyczące Politechniki Łódzkiej i pomaganie w uzyskaniu najważniejszych informacji.",
     "typ": "Tulbot"
+  },
+  {
+    "pytanie": "Co oznacza „rok akademicki” w regulaminie studiów PŁ?",
+    "odpowiedz": "Rok akademicki to okres kalendarzowy, w którym realizowane są zajęcia oraz egzaminy i zaliczenia przewidziane w planie i programie studiów. Innymi słowy: to „ramy czasowe” całego procesu dydaktycznego w danym cyklu rocznym.",
+    "typ": "definicje"
+  },
+  {
+    "pytanie": "Co oznacza „rok studiów” w regulaminie studiów PŁ?",
+    "odpowiedz": "Rok studiów to jednostka rozliczeniowa realizacji programu studiów. Służy do rozliczania postępów studenta (np. rejestracja na kolejny rok, wymagania punktowe, decyzje prodziekana).",
+    "typ": "definicje"
+  },
+  {
+    "pytanie": "Czym jest „semestr studiów” według regulaminu PŁ?",
+    "odpowiedz": "Semestr studiów to okres rozliczeniowy służący ocenie postępów studenta w nauce. W semestrze student uzyskuje zaliczenia/egzaminy, a następnie jest podejmowana decyzja o jego dalszej rejestracji.",
+    "typ": "definicje"
+  },
+  {
+    "pytanie": "Czym jest walidacja efektów uczenia się?",
+    "odpowiedz": "Walidacja efektów uczenia się to proces potwierdzania, że dana osoba uzyskała efekty uczenia się zweryfikowane zgodnie z odpowiednimi standardami.",
+    "typ": "definicje"
+  },
+  {
+    "pytanie": "Czym jest weryfikacja efektów uczenia się?",
+    "odpowiedz": "Weryfikacja efektów uczenia się to metody i procesy prowadzące do ustalenia, czy dana osoba osiągnęła określone rezultaty uczenia się (wiedzę, umiejętności i kompetencje społeczne). Proces weryfikacji może przebiegać bez bezpośredniego udziału osoby ubiegającej się o walidację.",
+    "typ": "definicje"
+  },
+  {
+    "pytanie": "Co oznacza „zaliczenie przedmiotu” w regulaminie PŁ?",
+    "odpowiedz": "Zaliczenie przedmiotu oznacza uzyskanie pozytywnej łącznej oceny końcowej z przedmiotu. To końcowy rezultat spełnienia wymagań dla przedmiotu (np. zaliczeń cząstkowych i/lub egzaminu).",
+    "typ": "definicje"
+  },
+  {
+    "pytanie": "Co oznacza „zaliczenie zajęć” w regulaminie PŁ?",
+    "odpowiedz": "Zaliczenie zajęć to zakończona wystawieniem oceny czynność sprawdzenia osiągnięcia efektów uczenia się przewidzianych dla danej formy realizacji przedmiotu (np. laboratoria, ćwiczenia, projekt).",
+    "typ": "definicje"
+  },
+  {
+    "pytanie": "Kiedy student nabywa prawa studenta na Politechnice Łódzkiej?",
+    "odpowiedz": "Rozpoczęcie studiów i nabycie praw studenta następuje z chwilą złożenia podpisu pod rotą ślubowania (tekst roty określa Statut PŁ). Od tego momentu student uzyskuje formalny status studenta.",
+    "typ": "regulaminy_studiow"
+  },
+  {
+    "pytanie": "Co się dzieje, jeśli student nie złoży ślubowania w wymaganym terminie?",
+    "odpowiedz": "Niezłożenie ślubowania w terminie wskazanym w regulaminie skutkuje wykreśleniem wpisu na liście studentów.",
+    "typ": "regulaminy_studiow"
+  },
+  {
+    "pytanie": "Kto jest zwierzchnikiem i opiekunem studentów Politechniki Łódzkiej?",
+    "odpowiedz": "Zwierzchnikiem i opiekunem studentów Politechniki Łódzkiej jest Rektor. Oznacza to, że Rektor jest najwyższym organem właściwym dla kluczowych spraw studenckich w regulaminie.",
+    "typ": "odwolania_i_decyzje"
+  },
+  {
+    "pytanie": "Kto wydaje decyzje administracyjne w indywidualnych sprawach studentów?",
+    "odpowiedz": "Decyzje administracyjne w indywidualnych sprawach studentów wydaje Rektor. To dotyczy spraw rozstrzyganych w trybie administracyjnym (z formalną decyzją).",
+    "typ": "odwolania_i_decyzje"
+  },
+  {
+    "pytanie": "Czy Rektor może upoważnić inne osoby do wydawania decyzji administracyjnych?",
+    "odpowiedz": "Tak. Rektor może upoważnić inną osobę do wydawania decyzji administracyjnych w indywidualnych sprawach studentów, w szczególności właściwego Prodziekana. Upoważnienie nie zmienia tego, że decyzje są wydawane w ramach kompetencji Rektora.",
+    "typ": "odwolania_i_decyzje"
+  },
+  {
+    "pytanie": "Jak i w jakim terminie złożyć wniosek o ponowne rozpatrzenie sprawy od decyzji Rektora?",
+    "odpowiedz": "Od decyzji administracyjnej wydanej przez Rektora przysługuje wniosek o ponowne rozpatrzenie sprawy. Wniosek składa się do Rektora za pośrednictwem podmiotu, który wydał decyzję, w terminie 14 dni od doręczenia decyzji.",
+    "typ": "odwolania_i_decyzje"
+  },
+  {
+    "pytanie": "Kto podejmuje rozstrzygnięcia w indywidualnych sprawach studenta inne niż decyzje administracyjne?",
+    "odpowiedz": "Rozstrzygnięcia w indywidualnych sprawach studenta inne niż decyzje administracyjne podejmuje właściwy Prodziekan. Są to sprawy, które regulamin klasyfikuje jako „rozstrzygnięcia” (a nie decyzje administracyjne).",
+    "typ": "odwolania_i_decyzje"
+  },
+  {
+    "pytanie": "Jak odwołać się od rozstrzygnięcia Prodziekana i ile jest na to czasu?",
+    "odpowiedz": "Od rozstrzygnięć Prodziekana przysługuje odwołanie do Rektora złożone w terminie 14 dni. Wniosek składa się za pośrednictwem podmiotu, który podjął rozstrzygnięcie (chyba że regulamin przewiduje wyjątek). Decyzja Rektora w sprawie odwołania jest ostateczna.",
+    "typ": "odwolania_i_decyzje"
+  },
+  {
+    "pytanie": "Kto rozstrzyga w drugiej instancji sprawy dotyczące rozstrzygnięć Prodziekana?",
+    "odpowiedz": "Do rozstrzygania w drugiej instancji spraw związanych z rozstrzygnięciami Prodziekana właściwy jest Prorektor albo inna osoba upoważniona przez Rektora. Oznacza to formalny mechanizm „drugiej instancji” wskazany w regulaminie.",
+    "typ": "odwolania_i_decyzje"
+  },
+  {
+    "pytanie": "Jaką rolę pełni Samorząd Studencki Politechniki Łódzkiej według regulaminu?",
+    "odpowiedz": "Samorząd Studencki PŁ, działając przez swoje organy, jest wyłącznym reprezentantem interesów i wyrazicielem opinii ogółu studentów Uczelni w sprawach studenckich. To podstawowy kanał reprezentacji studentów w regulaminie.",
+    "typ": "samorzad"
+  },
+  {
+    "pytanie": "Jakie prawa studenta wskazuje regulamin PŁ w zakresie współdecydowania o sprawach uczelni?",
+    "odpowiedz": "Student ma prawo współdecydować poprzez organy Samorządu Studenckiego m.in. w sprawach funkcjonowania uczelni, procesu kształcenia, przyznawania pomocy materialnej, nagród i wyróżnień, a także w podziale środków przeznaczonych na sprawy studenckie.",
+    "typ": "prawa_i_obowiazki"
+  },
+  {
+    "pytanie": "Czy student ma prawo do korzystania z infrastruktury Politechniki Łódzkiej?",
+    "odpowiedz": "Tak. Regulamin wskazuje prawo studenta do korzystania z infrastruktury uczelni, w tym bazy sportowej, na zasadach ustalonych przez władze uczelni. Szczegółowe zasady mogą wynikać z przepisów wewnętrznych i organizacji pracy jednostek.",
+    "typ": "prawa_i_obowiazki"
+  },
+  {
+    "pytanie": "Czy student ma prawo do wsparcia przedstawiciela Samorządu w relacjach z władzami uczelni?",
+    "odpowiedz": "Tak. Regulamin przewiduje prawo studenta do korzystania, w relacjach z władzami uczelni, ze wsparcia upoważnionych przez niego przedstawicieli Samorządu Studenckiego.",
+    "typ": "prawa_i_obowiazki"
+  },
+  {
+    "pytanie": "Na czym polega podstawowy obowiązek studiowania zgodnie z programem i planem zajęć?",
+    "odpowiedz": "Student ma obowiązek odbywać studia zgodnie z programem studiów i planem zajęć. Obejmuje to w szczególności: uczestniczenie w zajęciach dydaktycznych i organizacyjnych, uzyskiwanie zaliczeń, składanie egzaminów, odbywanie praktyk oraz realizowanie innych zadań wynikających z programu studiów.",
+    "typ": "prawa_i_obowiazki"
+  },
+  {
+    "pytanie": "Czy student ma obowiązek odbyć szkolenia BHP?",
+    "odpowiedz": "Tak. Do obowiązków studenta należy odbywanie wymaganych odrębnymi przepisami szkoleń z zakresu BHP. Brak realizacji może powodować konsekwencje organizacyjne lub dyscyplinarne zależnie od sytuacji i decyzji władz.",
+    "typ": "prawa_i_obowiazki"
+  },
+  {
+    "pytanie": "Czy na niektórych kierunkach wymagane jest orzeczenie lekarskie o braku przeciwwskazań do studiowania?",
+    "odpowiedz": "Tak. Jeśli student otrzyma skierowanie od właściwych władz uczelni, ma obowiązek uzyskać i przedstawić orzeczenie lekarskie potwierdzające brak przeciwwskazań do realizacji studiów na kierunku, gdzie występuje narażenie na czynniki szkodliwe/uciążliwe/niebezpieczne. Nieprzedstawienie może skutkować niedopuszczeniem do zajęć.",
+    "typ": "prawa_i_obowiazki"
+  },
+  {
+    "pytanie": "Jakie formy zaświadczenia lekarskiego są uznawane do usprawiedliwienia nieobecności na obowiązkowych zajęciach?",
+    "odpowiedz": "Regulamin przewiduje usprawiedliwienie nieobecności z powodu stanu zdrowia zaświadczeniem lekarskim w jednej z form:\n- dokument elektroniczny,\n- wydruk e-zaświadczenia z podpisem i pieczątką lekarza,\n- zaświadczenie na formularzu wydrukowanym z systemu elektronicznego ZUS.",
+    "typ": "prawa_i_obowiazki"
+  },
+  {
+    "pytanie": "Czy student ma obowiązek korzystać z uczelnianej poczty e-mail i jak często ma ją sprawdzać?",
+    "odpowiedz": "Tak. Student ma obowiązek korzystać z Systemu Poczty Elektronicznej Uczelni jako podstawowego środka komunikacji w sprawach przebiegu studiów, w tym codziennie sprawdzać indywidualną skrzynkę poczty elektronicznej.",
+    "typ": "systemy_uczelni"
+  },
+  {
+    "pytanie": "Czy informacje przesyłane studentowi przez uczelniany e-mail są wiążące?",
+    "odpowiedz": "Tak. Informacje przekazywane przez prowadzących zajęcia oraz administrację uczelni poprzez system poczty elektronicznej są dla studenta wiążące, a student jest zobowiązany do podjęcia działań przekazanych tą drogą.",
+    "typ": "systemy_uczelni"
+  },
+  {
+    "pytanie": "Czy niewniesienie opłat związanych ze studiami może mieć konsekwencje w postaci skreślenia?",
+    "odpowiedz": "Tak. Student jest zobowiązany do terminowego wnoszenia opłat związanych z odbywaniem studiów oraz opłat za usługi edukacyjne (jeżeli przewidują je odrębne przepisy). Niewniesienie tych opłat może skutkować skreśleniem z listy studentów.",
+    "typ": "sprawy_administracyjne"
+  },
+  {
+    "pytanie": "W jakim terminie student musi złożyć oświadczenie o zaakceptowaniu warunków odbywania studiów i opłat?",
+    "odpowiedz": "Student ma obowiązek złożyć oświadczenie o zaakceptowaniu i zobowiązaniu się do przestrzegania warunków odbywania studiów i pobierania opłat w ciągu 30 dni od rozpoczęcia zajęć.",
+    "typ": "sprawy_administracyjne"
+  },
+  {
+    "pytanie": "Jakie informacje student powinien niezwłocznie zgłaszać Prodziekanowi?",
+    "odpowiedz": "Student ma obowiązek niezwłocznie powiadomić właściwego Prodziekana o okolicznościach negatywnie wpływających na wypełnianie obowiązków wynikających z regulaminu i innych przepisów uczelni. Dodatkowo powinien zgłaszać zmiany nazwiska, adresu oraz zmiany okoliczności wpływające na zakres i wysokość przyznanej pomocy materialnej.",
+    "typ": "sprawy_administracyjne"
+  },
+  {
+    "pytanie": "Czy student pod wpływem alkoholu lub narkotyków może uczestniczyć w zajęciach?",
+    "odpowiedz": "Nie. Studentowi będącemu pod wpływem alkoholu, narkotyków lub podobnie działających środków psychoaktywnych nie wolno uczestniczyć w zajęciach. Regulamin przewiduje możliwość skierowania wniosku o wszczęcie postępowania dyscyplinarnego i wymierzenia kar dyscyplinarnych.",
+    "typ": "dyscyplinarne"
+  },
+  {
+    "pytanie": "Ile trwa „godzina zajęć” na Politechnice Łódzkiej?",
+    "odpowiedz": "Podstawową jednostką dydaktyczną jest „godzina zajęć” trwająca 45 minut. To standard używany do planowania i rozliczania zajęć.",
+    "typ": "plan_zajec_i_godziny"
+  },
+  {
+    "pytanie": "W jakich godzinach odbywają się zajęcia na studiach stacjonarnych?",
+    "odpowiedz": "Zajęcia na studiach stacjonarnych odbywają się w dni robocze w godzinach 8:00–21:00. Wyjątkiem są zajęcia z wychowania fizycznego, które mogą odbywać się w godzinach 6:00–21:00.",
+    "typ": "plan_zajec_i_godziny"
+  },
+  {
+    "pytanie": "W jakich dniach i godzinach mogą odbywać się zajęcia na studiach niestacjonarnych?",
+    "odpowiedz": "Zajęcia na studiach niestacjonarnych mogą odbywać się w terminach zjazdów realizowanych w soboty i niedziele, w godzinach 8:00–20:00.",
+    "typ": "plan_zajec_i_godziny"
+  },
+  {
+    "pytanie": "Czy można zmienić standardowe terminy odbywania zajęć (godziny/dni)?",
+    "odpowiedz": "Tak, ale wyłącznie za udokumentowaną zgodą studentów, których te zmiany dotyczą. Bez takiej zgody standardowe terminy obowiązują.",
+    "typ": "plan_zajec_i_godziny"
+  },
+  {
+    "pytanie": "Czy zajęcia, zaliczenia i egzaminy na studiach stacjonarnych i niestacjonarnych mogą odbywać się wspólnie?",
+    "odpowiedz": "Nie. Regulamin stanowi, że zajęcia dydaktyczne, zaliczenia i egzaminy na studiach niestacjonarnych i stacjonarnych nie mogą odbywać się wspólnie.",
+    "typ": "organizacja_studiow"
+  },
+  {
+    "pytanie": "Czy studia na PŁ mogą być prowadzone w językach obcych i co to obejmuje?",
+    "odpowiedz": "Tak, jeśli program studiów to przewiduje. Prowadzenie studiów w języku obcym obejmuje również: weryfikację uzyskania efektów uczenia się w języku obcym, przygotowanie pracy dyplomowej oraz egzamin dyplomowy w języku obcym.",
+    "typ": "jezyk_studiow"
+  },
+  {
+    "pytanie": "Czy na studiach prowadzonych po polsku mogą pojawić się zajęcia realizowane w języku obcym?",
+    "odpowiedz": "Tak. Wybrane przedmioty i zajęcia na studiach prowadzonych w języku polskim mogą – zgodnie z programem studiów – być realizowane w języku obcym.",
+    "typ": "jezyk_studiow"
+  },
+  {
+    "pytanie": "Czy student ma obowiązek okazać legitymację studencką podczas zaliczeń i egzaminów?",
+    "odpowiedz": "Tak. Student jest zobowiązany przedstawić na prośbę prowadzącego ważną legitymację studencką podczas zaliczania zajęć i składania egzaminów.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "Czy student ma prawo wglądu do swoich ocenionych prac?",
+    "odpowiedz": "Tak. Student ma prawo wglądu do swoich ocenionych prac w terminach wskazanych przez prowadzącego zajęcia. To dotyczy prac, które stanowiły podstawę wystawienia oceny.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "W jakim terminie powinny być udostępnione wyniki egzaminu lub innej formy weryfikacji efektów uczenia się?",
+    "odpowiedz": "Wyniki powinny być udostępnione studentowi:\n- co najmniej 48 godzin przed ostatnim z wyznaczonych w danej sesji terminów zaliczeń przedmiotu, oraz\n- nie później niż 10 dni od terminu przeprowadzenia zaliczenia/egzaminu.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "Która ocena z egzaminu jest oceną końcową i jaki jest wyjątek?",
+    "odpowiedz": "Chronologicznie ostatnia uzyskana ocena z egzaminu jest oceną końcową. Wyjątkiem jest egzamin kompetencyjny – tam pierwsza pozytywna ocena jest oceną końcową.",
+    "typ": "skala_ocen"
+  },
+  {
+    "pytanie": "Jak długo prowadzący ma obowiązek przechowywać pisemne prace zaliczeniowe i egzaminacyjne?",
+    "odpowiedz": "Prowadzący ma obowiązek przechowywać pisemne prace zaliczeniowe i egzaminacyjne, które były podstawą wyznaczenia oceny z przedmiotu, przez okres minimum 3 lat.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "W jakim terminie wyniki zaliczeń przedmiotów muszą zostać wprowadzone do systemu informatycznego uczelni?",
+    "odpowiedz": "Kierownik przedmiotu lub osoba przez niego upoważniona ma obowiązek wprowadzić wyniki zaliczeń do systemu informatycznego uczelni w terminie do 7 dni od ustalenia oceny. Ma też obowiązek przestrzegać terminów potwierdzania i dokumentowania wyników zgodnie z harmonogramem terminów obligatoryjnych.",
+    "typ": "systemy_uczelni"
+  },
+  {
+    "pytanie": "Czym jest „termin zerowy” egzaminu i czy wlicza się do limitu podejść?",
+    "odpowiedz": "Termin zerowy to dodatkowy termin egzaminu wyznaczony przed sesją (w okresie zajęć), z inicjatywy prowadzącego lub na wniosek studenta. Termin zerowy nie wlicza się do liczby terminów przysługujących studentowi, a zasady i wymagania są takie same jak na terminach podstawowych.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "W jakim terminie student powinien złożyć wniosek o usprawiedliwienie nieprzystąpienia do zaliczenia lub egzaminu?",
+    "odpowiedz": "Prowadzący może uznać nieprzystąpienie do zaliczenia/egzaminu za usprawiedliwione na podstawie uzasadnionego i udokumentowanego wniosku studenta. Wniosek trzeba złożyć najpóźniej w terminie 7 dni od ustalonego terminu zaliczenia lub egzaminu.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "Co oznacza nieusprawiedliwiona nieobecność na egzaminie lub zaliczeniu?",
+    "odpowiedz": "Nieusprawiedliwiona nieobecność w danym terminie egzaminu lub zaliczenia powoduje utratę tego terminu. Oznacza to, że student „zużywa” podejście bez uzyskania oceny.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "Kiedy student może wnioskować o egzamin komisyjny lub zaliczenie komisyjne?",
+    "odpowiedz": "Student może złożyć do Prodziekana uzasadniony wniosek o egzamin/zaliczenie komisyjne w ciągu 7 dni od ogłoszenia wyników, jeśli uzyskał niezadowalającą ocenę i wyczerpał liczbę przysługujących przystąpień do zaliczeń/egzaminów.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "W jakim czasie powinno odbyć się zaliczenie komisyjne lub egzamin komisyjny po złożeniu wniosku?",
+    "odpowiedz": "Prodziekan zarządza egzamin/zaliczenie komisyjne, które muszą odbyć się w terminie 14 dni od daty złożenia wniosku przez studenta. Prodziekan może też zarządzić komisyjne z własnej inicjatywy przed decyzją rejestracyjną.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "Kto może uczestniczyć jako obserwator podczas egzaminu komisyjnego lub zaliczenia komisyjnego?",
+    "odpowiedz": "W charakterze obserwatorów mogą uczestniczyć:\n- przedstawiciel Samorządu Studenckiego zaproszony przez Prodziekana,\n- inna osoba wskazana przez egzaminowanego studenta.\nJednocześnie osoba, która przeprowadziła poprzedni egzamin/zaliczenie, nie może uczestniczyć w egzaminie/zaliczeniu komisyjnym.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "Czy ocena z egzaminu komisyjnego lub zaliczenia komisyjnego jest ostateczna?",
+    "odpowiedz": "Tak. Wynik ustala komisja, a ocena z egzaminu/zaliczenia komisyjnego jest oceną ostateczną.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "Jakie są konsekwencje ściągania lub zakłócania przebiegu sprawdzianu/egzaminu?",
+    "odpowiedz": "Jeśli stwierdzi się niesamodzielne rozwiązywanie zadań, korzystanie z niedozwolonych materiałów lub urządzeń albo zakłócanie prawidłowego przebiegu sprawdzania efektów uczenia się, dana forma może zostać przerwana i unieważniona dla studenta. Student ma prawo przystąpić do ponownego sprawdzenia efektów uczenia się w następnym semestrze.",
+    "typ": "uczciwosc_akademicka"
+  },
+  {
+    "pytanie": "Czy student może odwołać się od decyzji prowadzącego po unieważnieniu sprawdzianu/egzaminu (np. za ściąganie)?",
+    "odpowiedz": "Tak. Prowadzący informuje o sytuacji (i powiadamia Prodziekana), a student ma prawo złożyć do Prodziekana odwołanie od decyzji prowadzącego w terminie 7 dni.",
+    "typ": "uczciwosc_akademicka"
+  },
+  {
+    "pytanie": "Co grozi za niesamodzielną pracę oddaną do oceny (np. projekt, sprawozdanie)?",
+    "odpowiedz": "Jeśli stwierdzi się niesamodzielność pracy, prowadzący ma obowiązek poinformować studenta i powiadomić Prodziekana. Niesamodzielne przygotowanie pracy może być podstawą do niezaliczenia przedmiotu. Student ma prawo odwołać się do Prodziekana w terminie 7 dni od poinformowania go o stwierdzeniu niesamodzielności.",
+    "typ": "uczciwosc_akademicka"
+  },
+  {
+    "pytanie": "Czy nagrywanie dźwięku lub obrazu w trakcie zajęć jest dozwolone?",
+    "odpowiedz": "Rejestrowanie dźwięku i obrazu w trakcie zajęć jest możliwe wyłącznie po uzyskaniu wcześniejszej zgody prowadzącego (z zastrzeżeniami dotyczącymi sytuacji związanych z niepełnosprawnością). Prowadzący może też zobowiązać studenta do złożenia deklaracji ochrony praw autorskich i wykorzystania materiałów wyłącznie na użytek prywatny.",
+    "typ": "uczciwosc_akademicka"
+  },
+  {
+    "pytanie": "Jak zalicza się praktyki i kto o tym decyduje?",
+    "odpowiedz": "Sposób i tryb odbywania oraz zaliczania praktyk określa karta praktyk właściwa dla danego programu studiów. O zaliczeniu praktyki decyduje Prodziekan lub inny pracownik upoważniony przez Rektora.",
+    "typ": "praktyki_i_staze"
+  },
+  {
+    "pytanie": "Czy można rozpocząć praktyki wcześniej niż przewiduje program?",
+    "odpowiedz": "Tak, ale wymaga to uprzedniej zgody Prodziekana lub innego pracownika upoważnionego przez Rektora. Bez takiej zgody wcześniejsze rozpoczęcie praktyk nie powinno być traktowane jako realizacja praktyki programowej.",
+    "typ": "praktyki_i_staze"
+  },
+  {
+    "pytanie": "Czy praca zawodowa może zostać uznana jako praktyka lub jej część?",
+    "odpowiedz": "Tak. Praca zawodowa lub równoważne aktywności mogą stanowić podstawę zaliczenia praktyki (lub jej części), pod warunkiem że osiągane w ten sposób efekty uczenia się odpowiadają wymaganym w karcie praktyki. O zaliczeniu decyduje uprawniona osoba wskazana w regulaminie.",
+    "typ": "praktyki_i_staze"
+  },
+  {
+    "pytanie": "Jakie są podstawowe zasady urlopu: prawa studenta, opłaty i formalności po urlopie?",
+    "odpowiedz": "W okresie urlopu student zachowuje uprawnienia studenckie, a za okres urlopu nie pobiera się opłat za studia i inne usługi edukacyjne (z wyjątkami wskazanymi w regulaminie). Po zakończeniu urlopu student składa do Prodziekana – najpóźniej do dnia poprzedzającego rozpoczęcie semestru – wniosek o zgodę na kontynuację studiów; brak wniosku jest podstawą do skreślenia z listy studentów z powodu niepodjęcia studiów. Prodziekan podejmuje decyzję o kontynuacji i rejestracji wynikającą z dotychczasowego przebiegu studiów.",
+    "typ": "urlopy"
+  },
+  {
+    "pytanie": "Jakie ograniczenia dotyczą urlopu długoterminowego w PŁ?",
+    "odpowiedz": "Urlopu długoterminowego udziela Prorektor na udokumentowany wniosek studenta. Urlop długoterminowy można uzyskać jednokrotnie na danym poziomie i programie studiów, a łączenie go z urlopem zawodowym nie jest dozwolone. Udzielenie urlopu przedłuża planowany termin ukończenia studiów i jest potwierdzane decyzją oraz wpisem do systemu informatycznego.",
+    "typ": "urlopy"
+  },
+  {
+    "pytanie": "Jak wygląda ponowne przyjęcie na studia po skreśleniu z listy studentów pierwszego roku?",
+    "odpowiedz": "Ponowne przyjęcie na studia osoby skreślonej z listy studentów pierwszego roku odbywa się w trybie rekrutacji. Oznacza to konieczność przejścia standardowej procedury rekrutacyjnej właściwej dla danego kierunku i formy studiów.",
+    "typ": "skreslenia_i_wznowienie"
+  },
+  {
+    "pytanie": "Czy osoba skreślona na drugim roku lub wyższych latach może wrócić na studia bez ponownej rekrutacji?",
+    "odpowiedz": "Tak. Osoba skreślona na drugim roku lub wyższych latach może – za zgodą Prodziekana – zostać powtórnie wpisana na listę studentów i przywrócona w prawach studenta. Jest to tzw. powtórny wpis (wznowienie) realizowany na podstawie wniosku.",
+    "typ": "skreslenia_i_wznowienie"
+  },
+  {
+    "pytanie": "Jaki jest termin złożenia wniosku o powtórny wpis (wznowienie) po skreśleniu z 2. roku lub wyżej?",
+    "odpowiedz": "Wniosek o powtórny wpis na listę studentów składa się do Prodziekana najpóźniej na 21 dni przed rozpoczęciem semestru, od którego student zamierza wznowić studia. We wniosku należy wskazać kierunek i formę studiów.",
+    "typ": "skreslenia_i_wznowienie"
+  },
+  {
+    "pytanie": "Jakie warunki trzeba spełnić, aby Prodziekan mógł przywrócić studenta w prawach studenta po skreśleniu?",
+    "odpowiedz": "Powtórny wpis (przywrócenie) jest możliwy pod warunkami spełnionymi łącznie, m.in.:\n- od uprawomocnienia decyzji o skreśleniu nie upłynęło więcej niż 5 lat,\n- osoba nie była wcześniej przywracana na tym samym poziomie studiów,\n- skreślenie nie było konsekwencją wydalenia dyscyplinarnego,\n- kierunek nadal jest prowadzony,\n- w określonych przypadkach wymagane jest aktualne orzeczenie lekarskie,\n- student rozliczył zobowiązania finansowe i materialne wobec uczelni.\nProdziekan podejmuje decyzję i może odmówić, jeśli przebieg studiów nie gwarantuje ukończenia lub zmiany programu uniemożliwiają kontynuację.",
+    "typ": "skreslenia_i_wznowienie"
+  },
+  {
+    "pytanie": "Jak uczelnia wspiera studiowanie osób z niepełnosprawnością i kiedy zgłosić potrzeby?",
+    "odpowiedz": "Uczelnia powinna – w miarę możliwości – stwarzać osobom z niepełnosprawnością warunki do pełnego udziału w procesie kształcenia, a jednostką koordynującą wsparcie jest Biuro ds. Obsługi Osób Niepełnosprawnych (BON). Potrzeby wynikające z niepełnosprawności student zgłasza do Prodziekana i do BON najpóźniej w ciągu 2 tygodni od rozpoczęcia semestru (a jeśli potrzeby pojawią się w trakcie semestru – w ciągu 2 tygodni od ich zaistnienia). Możliwe są m.in. dostosowania organizacji procesu dydaktycznego, zwiększenie dopuszczalnej liczby nieobecności, IOZ lub urlop, a także inne rozwiązania zgodne z opinią BON i możliwościami uczelni.",
+    "typ": "niepelnosprawnosc"
+  },
+  {
+    "pytanie": "Jak wygląda recenzowanie pracy dyplomowej i co się dzieje przy negatywnej ocenie recenzenta?",
+    "odpowiedz": "Promotor przygotowuje opinię i wystawia liczbową ocenę z pracy. Recenzent ma przygotować recenzję i wystawić ocenę najpóźniej w ciągu 14 dni od otrzymania pracy. Jeśli recenzent wystawi ocenę negatywną, Prodziekan wyznacza drugiego recenzenta. Negatywna ocena drugiego recenzenta skutkuje uznaniem pracy za niezłożoną i anulowaniem w systemie wpisu „zal” potwierdzającego przyjęcie pracy; Prodziekan może wtedy (na wniosek studenta) przedłużyć termin złożenia pracy maksymalnie o 3 miesiące i skierować studenta na powtarzanie ostatniego semestru.",
+    "typ": "dyplomowanie"
+  },
+  {
+    "pytanie": "Jak uzyskać dopuszczenie do egzaminu dyplomowego: wniosek, terminy i decyzja?",
+    "odpowiedz": "Student w terminie 21 dni od spełnienia warunków programu (wszystkie zaliczenia i punkty ECTS, w tym złożenie pracy dyplomowej) ma obowiązek uregulować zobowiązania wobec uczelni i złożyć do Prodziekana wniosek o dopuszczenie do egzaminu dyplomowego. Prodziekan – po potwierdzeniu m.in. zaliczeń, praktyk, terminowego złożenia pracy, potwierdzenia oryginalności oraz pozytywnych ocen promotora i recenzenta – wydaje w ciągu 14 dni decyzję o dopuszczeniu i wyznacza termin egzaminu. Jeśli student nie złoży wniosku w wymaganym trybie i terminie, Prodziekan może wyznaczyć termin egzaminu z własnej inicjatywy.",
+    "typ": "dyplomowanie"
+  },
+  {
+    "pytanie":"Czy studia są płatne",
+    "odpowiedz":"Posiadanie obywatelstwa polskiego uprawnia Cię do studiowania bez ponoszenia opłat za studia. Jednak, jeżeli chcesz studiować na studiach niestacjonarnych, to takie studia są płatne za każdy semestr. Wysokość opłat zależy od kierunku, a informacja taka jest dostępna na stronie rekrutacji https://rekrutacja.p.lodz.pl/studia-i-i-ii-stopnia/rekrutuj/oplaty#studia_i_stopnia%3Eop%C5%82ata_za_studia.",
+    "typ": "rekrutacja_oplaty"
+  },
+  {
+    "pytanie":"Jak dokonać opłaty za postępowanie rekrutacyjne",
+    "odpowiedz":"Opłatę rekrutacyjną można dokonać jedynie poprzez system płatności PayU dostępny w Portalu Kandydata. Opłata dokonywana jest osobno za każdy wybrany kierunek.",
+    "typ": "rekrutacja_oplaty"
+  },
+  {
+    "pytanie":"Czym różnią się studia stacjonarne od niestacjonarnych",
+    "odpowiedz":"Zajęcia na studiach stacjonarnych odbywają się od poniedziałku do piątku. Każdy rok akademicki składa się z dwóch semestrów (zimowego – październik-luty oraz letniego – marzec-wrzesień). Każdy semestr składa się z 15 tygodni zajęć. Jeżeli posiadasz polskie obywatelstwo, to za te studia nie ponoszone są dodatkowe opłaty.\nZajęcia na studiach niestacjonarnych odbywają się w soboty i niedziele. Każdy rok akademicki składa się z dwóch semestrów (zimowego – październik-luty oraz letniego – marzec-wrzesień). Każdy semestr składa się z 10 zjazdów (sobota-niedziela), w czasie których odbywają się zajęcia. Studia niestacjonarne są płatne – wysokość opłat zależy od kierunku, można je znaleźć na stronie rekrutacji https://rekrutacja.p.lodz.pl/studia-i-i-ii-stopnia/rekrutuj/oplaty#studia_i_stopnia%3Eop%C5%82ata_za_studia.",
+    "typ":"rekrutacja_oplaty"
+  },
+  {
+    "pytanie":"Czy za każdy kierunek należy wnieść osobną opłatę rekrutacyjną?",
+    "odpowiedz":"Tak. Opłata jest pobierana za każdy wybrany kierunek. Terminowe jej uregulowanie (zaksięgowanie na koncie PŁ) jest warunkiem dalszego rozpatrywania  podania zarejestrowanego kandydata.",
+    "typ":"rekrutacja_oplaty"
+  },
+  {
+    "pytanie":"W jakim terminie należy wnieść opłatę rekrutacyjną?",
+    "odpowiedz":"Opłatę rekrutacyjną należy wnieść przed zakończeniem terminu rekrutacji poprzez płatność elektroniczną. Terminowe jej uregulowanie (zaksięgowanie na koncie PŁ)  jest warunkiem dalszego rozpatrywania  podania zarejestrowanego kandydata.",
+    "typ":"rekrutacja_oplaty"
+  },
+  {
+    "pytanie":"Co się stanie, jeśli nie wniosę oplaty rekrutacyjnej w wymaganym terminie (nie zostanie ona zaksięgowana)?",
+    "odpowiedz":"Jeśli kandydat nie dokona opłaty w terminie podanym w harmonogramie, nie będzie brany pod uwagę podczas kwalifikacji na studia na wybrany kierunek.",
+    "typ":"rekrutacja_oplaty"
+  },
+  {
+    "pytanie":"Jeśli nie posiadam konta bankowego. Czy mogę przekazać opłatę z konta innej osoby?",
+    "odpowiedz":"Tak. Nie ma znaczenia z czyjego konta dokonywana jest opłata.",
+    "typ":"rekrutacja_oplaty"
+  },
+  {
+    "pytanie":"Kiedy będzie widoczna wniesiona płatność",
+    "odpowiedz":"W Portalu Kandydata będzie widoczna informacja o dokonaniu opłaty za dany kierunek oraz numer dokonanej transakcji. Opłata wniesiona poprzez system PayU będzie widoczna na koncie kandydata w ciągu kilku minut. ",
+    "typ":"rekrutacja_oplaty"
+  },
+  {
+    "pytanie":"Strategia uczelni",
+    "odpowiedz":"Politechnika Łódzka, utworzona w 1945 roku, od lat osiąga swoje cele naukowe, edukacyjne i społeczne. Zmieniająca się rzeczywistość, postęp technologiczny oraz potrzeby społeczeństwa determinują ciągły, dynamiczny rozwój Uczelni.",
+    "typ":"uczelnia"
+  },
+  {
+    "pytanie":"Jakie sukcesy osiąga Politechnika Łódzka",
+    "odpowiedz":"Politechnika Łódzka osiąga wiele sukcesów, a ich wymienienie zajęłoby za dużo czasów, więcej możesz dowiedzieć się na stronie https://p.lodz.pl/uczelnia/nasze-sukcesy",
+    "typ":"uczelnia"
+  },
+  {
+    "pytanie":"Kto jest aktualnie rektorem Politechniki Łódzkiej",
+    "odpowiedz":"Rektorem Politechniki Łódzkiej jest prof. dr hab. inż. Krzysztof Jóźwik ",
+    "typ":"uczelnia"
+  },
+  {
+    "pytanie":"Kto jest aktualnie prorektorem ds. nauki Politechniki Łódzkiej",
+    "odpowiedz":"Prorektorem ds. nauki Politechniki Łódzkiej jest prof. dr hab. inż. Łukasz Albrecht",
+    "typ":"uczelnia"
+  },
+  {
+    "pytanie":"Kto jest aktualnie prorektorem ds. rozwoju?",
+    "odpowiedz":"Prorektorem ds. rozwoju Politechniki Łódzkiej jest prof. dr hab. inż. Adam Wojciechowski",
+    "typ":"uczelnia"
+  },
+  {
+    "pytanie":"Kto jest aktualnie prorektorem ds. kształcenia",
+    "odpowiedz":"Prorektorem ds. kształcenia Politechniki Łódzkiej jest dr hab. inż. Andrzej Romanowski, prof. uczelni",
+    "typ":"uczelnia"
+  },
+  {
+    "pytanie":"Kto jest aktualnie prorektorem ds. studenckich",
+    "odpowiedz":"Prorektorem ds. studenckich Politechniki Łódzkiej jest dr hab. inż. Witold Pawłowski, prof. uczelni",
+    "typ":"uczelnia"
+  },
+  {
+    "pytanie":"W jaki sposób mogę policzyć swój wskaźnik rekrutacyjny",
+    "odpowiedz":"Liczbę punktów możemy obliczyć na stronie https://rekrutacja.p.lodz.pl/studia-i-i-ii-stopnia/rekrutuj/policz-swoj-wskaznik-rekrutacyjny",
+    "typ":"rekrutacja_oplaty"
+  },
+  {
+    "pytanie":"Czym jest wikamp?",
+    "odpowiedz":"Wikamp to wirtualny kampus, czyli platforma internetowa, na której możesz uzyskać dostęp do materiałów z danego przedmiotu, uczestniczyć w zajęciach zdalnych czy znaleźć informacje o prowadzących.\n\nZnajdziesz tam także Webdziekanat – wirtualny dostęp do dziekanatu, w którym sprawdzisz oceny końcowe czy podstawowe informacje dotyczące kierunku. Znajdziesz tam także wzory podań i wnioski (np. podania o urlop czy wniosek o zakwaterowanie w DSie).\n\nLogując się, używaj loginu zgodnego ze swoim mailem studenckim, w formacie:\n\n123456789@edu.p.lodz.pl (numer podany przed znakiem @ to Twój numer albumu na studiach); hasło do Wikampa znajdziesz w Portalu Kandydata – w zakładce Aktywacja konta.\n\nJeśli potrzebujesz pomocy technicznej – napisz do Biura Obsługi Klienta Centrum E-Learningu: bok@edu.p.lodz.pl lub zadzwoń: 42 631 28 06.",
+    "typ": "systemy_uczelni"
+  },
+  {
+    "pytanie": "Czy student może uczestniczyć w zajęciach bez formalnej rejestracji na semestr?",
+    "odpowiedz": "Nie. Uczestnictwo w zajęciach dydaktycznych wymaga formalnej rejestracji na dany semestr. Brak rejestracji oznacza brak statusu studenta w danym okresie i może skutkować konsekwencjami administracyjnymi.",
+    "typ": "organizacja_studiow"
+  },
+  {
+    "pytanie": "Kiedy student jest uznawany za zarejestrowanego na kolejny semestr?",
+    "odpowiedz": "Student jest uznawany za zarejestrowanego na kolejny semestr po spełnieniu wszystkich warunków rejestracji określonych w regulaminie i decyzji właściwego Prodziekana. Rejestracja obejmuje m.in. rozliczenie poprzedniego semestru, uzyskanie wymaganych zaliczeń i punktów ECTS oraz brak zaległości formalnych.",
+    "typ": "organizacja_studiow"
+  },
+  {
+    "pytanie": "Czy prowadzący może zmienić zasady zaliczenia przedmiotu w trakcie semestru?",
+    "odpowiedz": "Zasady zaliczenia przedmiotu nie powinny być zmieniane w trakcie semestru. Ewentualne zmiany mogą nastąpić jedynie w uzasadnionych przypadkach i po poinformowaniu wszystkich studentów uczestniczących w zajęciach.",
+    "typ": "egzaminy_i_zaliczenia"
+  },
+  {
+    "pytanie": "Czy student ma obowiązek przestrzegać regulaminów wewnętrznych obowiązujących na uczelni?",
+    "odpowiedz": "Tak. Student ma obowiązek przestrzegać regulaminu studiów oraz innych przepisów i aktów wewnętrznych obowiązujących na Politechnice Łódzkiej. Dotyczy to zarówno zasad dydaktycznych, jak i organizacyjnych oraz porządkowych.",
+    "typ": "regulaminy_studiow"
+  },
+  {
+    "pytanie": "Czy brak znajomości regulaminu studiów zwalnia studenta z odpowiedzialności?",
+    "odpowiedz": "Nie. Nieznajomość regulaminu studiów oraz innych przepisów obowiązujących na uczelni nie zwalnia studenta z odpowiedzialności za ich nieprzestrzeganie.",
+    "typ": "regulaminy_studiow"
+  },
+  {
+    "pytanie": "Gdzie znajduje się główna siedziba Politechniki Łódzkiej i jaki jest jej numer telefonu ogólnego kontaktu?",
+    "odpowiedz": "Główna siedziba Politechniki Łódzkiej znajduje się przy ulicy Żeromskiego 116 w Łodzi. Centralny numer telefonu, pod którym można uzyskać informacje o uczelni, to +48 42 631 29 29",
+    "typ": "kontakt_i_jednostki"
+  },
+  {
+    "pytanie": "Jak można skontaktować się z Rektorem Politechniki Łódzkiej?",
+    "odpowiedz": "Z Rektorem Politechniki Łódzkiej można się skontaktować telefonicznie pod numerami +48 42 631 20 01 lub +48 42 631 20 02 albo mailowo na adres rector@adm.p.lodz.pl",
+    "typ": "kontakt_i_jednostki"
+  },
+  {
+    "pytanie": "Czy istnieje wyznaczony kontakt do inspektora ds. ochrony danych osobowych na PŁ?",
+    "odpowiedz": "Tak. Inspektorem ochrony danych osobowych na Politechnice Łódzkiej jest Data Protection Officer, kontakt: iod@adm.p.lodz.pl, telefonicznie +48 42 631 20 39",
+    "typ": "kontakt_i_jednostki"
+  },
+  {
+    "pytanie": "Jak skontaktować się z Centrum Współpracy Międzynarodowej dla kandydatów zagranicznych?",
+    "odpowiedz": "Centrum Współpracy Międzynarodowej (International Cooperation Centre) znajduje się przy ul. Żwirki 36 w Łodzi (budynek A16, pok. 113). Kontakt mailowy odbywa się poprzez foreignstudents@info.p.lodz.pl, a numery telefonów to +48 42 638 38 64, +48 42 638 38 63 i +48 42 638 38 78. Oficjalny WhatsApp kontakt to +48 785 289 588 (tylko w sprawach ogólnych).",
+    "typ": "kontakt_i_jednostki"
+  },
+  {
+    "pytanie": "Jakie są dane kontaktowe Dziekana Wydziału Elektrotechniki, Elektroniki, Informatyki i Automatyki?",
+    "odpowiedz": "Dziekan Wydziału Elektrotechniki, Elektroniki, Informatyki i Automatyki Politechniki Łódzkiej znajduje się przy ul. Bohdana Stefanowskiego 18/22 w Łodzi. Telefon kontaktowy to +48 42 631 25 02, a adres e-mail to jacek.kucharski@p.lodz.pl",
+    "typ": "kontakt_i_jednostki"
+  },
+  {
+    "pytanie": "Jak skontaktować się z Dziekanem Wydziału Budownictwa, Architektury i Inżynierii Środowiska?",
+    "odpowiedz": "Dziekan Wydziału Budownictwa, Architektury i Inżynierii Środowiska Politechniki Łódzkiej ma biuro przy al. Politechniki 6 w Łodzi. Telefon do dziekanatu to +48 42 631 35 02, a adres e-mail to deanarch@adm.p.lodz.pl",
+    "typ": "kontakt_i_jednostki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Mechanicznym na studiach I stopnia?",
+    "odpowiedz": "Na studiach I stopnia na Wydziale Mechanicznym prowadzone są m.in. kierunki: Mechanika i Budowa Maszyn, Automatyka i Robotyka, Materiały i technologie przyszłości, Energetyka, Transport, Mechanical Engineering - IFE, Business Society and Technology(ang.), Business Society and Technology(ang./franc).",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Mechanicznym na studiach II stopnia?",
+    "odpowiedz": "Na studiach II stopnia na Wydziale Mechanicznym prowadzone są m.in. kierunki: Mechanika i Budowa Maszyn, Automatyka i Robotyka, Materiały i Technologie, Master in Mechanical Engineering - IFE, Future Mobility - IFE, Smart Manufacturing, Energetyka Jądrowa i Odnawialne Źródła Energii.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Elektrotechniki, Elektroniki, Informatyki i Automatyki na studiach I stopnia?",
+    "odpowiedz": "Na studiach I stopnia na Wydziale Elektrotechniki, Elektroniki, Informatyki i Automatyki prowadzone są m.in. kierunki: Automatyka i sterowanie robotów, Biomedical Engineering and Technologies, Computer Science, Eletronic and Telecommunication Engineering, Elektronika i telekomunikacja, Elektrotechnika, Informatyka, Inzynieria biomedyczna, Mechatronika, Systemy sterowania inteligentnymi budynkami",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Elektrotechniki, Elektroniki, Informatyki i Automatyki na studiach II stopnia?",
+    "odpowiedz": "Na studiach II stopnia na Wydziale Elektrotechniki, Elektroniki, Informatyki i Automatyki prowadzone są m.in. kierunki: Automatyka i sterowanie robotów, Computer Science and Information Technology, Elektronika i telekomunikacja, Elektronika i telekomunikacja(Applied Electronics), Elektrotechnika, Human-Computer Interaction, Informatyka, Inżynieria biomedyczna, Mechatronika, Systemy sterowania inteligentnymi budynkami, Sztuczna inteligencja i uczenie maszynowe.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Chemicznym na studiach I stopnia?",
+    "odpowiedz": "Na studiach I stopnia na Wydziale Chemicznym prowadzone są m.in. kierunki: Menedżer produktów chemicznych, Advanced Biobased and Bioinspired Materials, Analityka chemiczna, Chemia, Chemia budowlana, Informatyka w ochronie środowiska, Nanotechnologia, Technologia chemiczna.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Chemicznym na studiach II stopnia?",
+    "odpowiedz": "Na studiach II stopnia na Wydziale Chemicznym prowadzone są m.in. kierunki: Chemia, Chemia w kryminalistyce, Nanotechnologia, Nanotechnologia(język angielski), Technlogia chemiczna, Technologie nowoczesnych materiałów funkcjonalnych.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Biotechnologii i Nauk o Żywności na studiach I stopnia?",
+    "odpowiedz": "Na studiach I stopnia na Wydziale Biotechnologii i Nauk o Żywności prowadzone są m.in. kierunki: Biotechnologia, Industrial Biotechnology, Technologia Żywności i Żywienie Człowieka, Ekotechnologie i Bioprocesy, Menedżer żywności i żywienia.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Biotechnologii i Nauk o Żywności na studiach II stopnia?",
+    "odpowiedz": "Na studiach II stopnia na Wydziale Biotechnologii i Nauk o Żywności prowadzone są m.in. kierunki: Biotechnologia, Industrial Biotechnology, Biogospodarka zrównoważona, Technologia kosmetyków, Technologia żywności i żywienie człowieka",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Fizyki Technicznej, Informatyki i Matematyki Stosowanej na studiach I stopnia?",
+    "odpowiedz": "Na studiach I stopnia na Wydziale Fizyki Technicznej, Informatyki i Matematyki Stosowanej prowadzone są m.in. kierunki: Fizyka Techniczna, Informatyka Stosowana, Matematyka Stosowana, Aktuariat i Analiza Finansowa, Information Technology, Mathematical Methods in Data Analysis, Modelling and Data Science.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Fizyki Technicznej, Informatyki i Matematyki Stosowanej na studiach II stopnia?",
+    "odpowiedz": "Na studiach II stopnia na Wydziale Fizyki Technicznej, Informatyki i Matematyki Stosowanej prowadzone są m.in. kierunki: Fizyka Techniczna, Informatyka Stosowana, Matematyka Stosowana.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Budownictwa, Architektury i Inżynierii Środowiska na studiach I stopnia?",
+    "odpowiedz": "Na studiach I stopnia na Wydziale Budownictwa, Architektury i Inżynierii Środowiska prowadzone są m.in. kierunki: Budownictwo, Architektura, Inżynieria Środowiska w budownictwie, Architektura(język angielski), Planowanie przestrzenne.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Budownictwa, Architektury i Inżynierii Środowiska na studiach II stopnia?",
+    "odpowiedz": "Na studiach II stopnia na Wydziale Budownictwa, Architektury i Inżynierii Środowiska prowadzone są m.in. kierunki: Architektura, Budownictwo, Inżynieria Środowiska w budownictwie, BIM - modelowanie i koordynacja, Architektura(język angielski), Planowanie przestrzenne.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Organizacji i Zarządzania na studiach I stopnia?",
+    "odpowiedz": "Na studiach I stopnia na Wydziale Organizacji i Zarządzania prowadzone są m.in. kierunki: Zarządzanie, Logistyka, Papiernictwo i Poligrafia, Business Studies, Marketing w Przemyśle, Digital Management, Zarządzanie i inżynieria produkcji.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Organizacji i Zarządzania na studiach II stopnia?",
+    "odpowiedz": "Na studiach II stopnia na Wydziale Organizacji i Zarządzania prowadzone są m.in. kierunki: Zarządzanie, Master of Business Studies, Papiernictwo i poligrafia, Zarządzanie produkcją.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Inżynierii Procesowej i Ochrony Środowiska na studiach I stopnia?",
+    "odpowiedz": "Na studiach I stopnia na Wydziale Inżynierii Procesowej i Ochrony Środowiska prowadzone są m.in. kierunki: Inżynieria Ochrony Środowiska, Inżynieria Procesów Przemysłowych, Inżynieria bezpieczeństwa pracy.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Inżynierii Procesowej i Ochrony Środowiska na studiach II stopnia?",
+    "odpowiedz": "Na studiach II stopnia na Wydziale Inżynierii Procesowej i Ochrony Środowiska prowadzone są m.in. kierunki: Energy Systems in the Built Environment, Inżynieria ochrony środowiska, Inżynieria procesów przemysłowych.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Włókiennictwa i Wzornictwa na studiach I stopnia?",
+    "odpowiedz": "Na studiach I stopnia na Wydziale Włókiennictwa i Wzornictwa prowadzone są m.in. kierunki: Włókiennictwo i Przemysł Mody, Wzornictwo, Tekstronika, Inżynieria wzornictwa przemysłowego, Włókiennictwo i przemysł mody(język angielski).",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na Wydziale Włókiennictwa i Wzornictwa na studiach II stopnia?",
+    "odpowiedz": "Na studiach II stopnia na Wydziale Włókiennictwa i Wzornictwa prowadzone są m.in. kierunki: Wzornictwo, Wzornictwo(język angielski), Włókiennictwo, Włókiennictwo(język angielski).",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone w Centrum Kształcenia Międzynarodowego (IFE) na studiach I stopnia?",
+    "odpowiedz": "W Centrum Kształcenia Międzynarodowego PŁ prowadzone są kierunki międzynarodowe, takie jak Advanced Biobased and Bioinspired Materials, Biomedical Engineering and Technologies, Business Studies, Business Society and Technology(English), Business Society and Technology(English/French), Computer Science, Electronic and Telecommunication Engineering, Industrial Biotechnology, Information Technology, Mathematical Methods in Data Analysis, Mechanical Engineering, Modelling and Data Science. .",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone w Centrum Kształcenia Międzynarodowego (IFE) na studiach II stopnia?",
+    "odpowiedz": "W Centrum Kształcenia Międzynarodowego PŁ prowadzone są kierunki magisterskie z międzynarodowym profilem nauczania, takie jak: Computer Science and Information Technology, Human-Computer Interaction, Industrial Biotechnology, Master in Mechanical Engineering, Master of Business Studies, Smart Manufacturing and Management.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na wydziale Centrum Papiernictwa i Poligrafii na studiach I stopnia?",
+    "odpowiedz": "Na studiach I stopnia na wydziale Centrum Papiernictwa i Poligrafii jest kierunek Papiernictwo i poligrafia.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie": "Jakie kierunki są prowadzone na wydziale Centrum Papiernictwa i Poligrafi na studiach II stopnia?",
+    "odpowiedz": "Na studiach II stopnia na wydziale Centrum Papiernictwa i Poligrafii prowadzony jest kierunek Papiernictwo i poligrafia.",
+    "typ": "rekrutacja_kierunki"
+  },
+  {
+    "pytanie":"Gdzie mogę uzyskać dokładne informację o programie studiów",
+    "odpowiedz":"Dokladny program studiów opisany jest na stronie: https://programy.p.lodz.pl/ectslabel-web/?l=pl&wersja202526=true",
+    "typ": "kierunki_program"
+  },
+  {
+    "pytanie": "Na czym polega kierunek Chemia w kryminalistyce na Politechnice Łódzkiej?",
+    "odpowiedz": "Kierunek Chemia w kryminalistyce na Politechnice Łódzkiej kształci absolwentów do poslugiwania się specjalistyczną wiedzą z zakresu chemii sądowej, analizy materiałów dowodowych oraz technik stosowanych w kryminalistyce. W programie studiów wiedza z zakresu pracy laboratoryjnej z materiałami dowodowymi została połączona z wiedzą dotyczącą zagadnień chemicznych, biologicznych i informatycznych. Kierunek prowadzony jest z wykorzystaniem nowoczesnych form kształcenia, bazujących na dużej liczbie zajęć o charakterze praktycznym (m.in. PBL/DT), które umożliwią studentom rozwiązywanie realnych problemów, rozwój umiejętności miękkich oraz pracę w grupie.",
+    "typ": "kierunki_opis"
+  },
+  {
+    "pytanie": "Jak wygląda program studiów na kierunku Chemia w kryminalistyce na Politechnice Łódzkiej?",
+    "odpowiedz": "Kształcenie prowadzone jest przez Politechnikę Łódzką z udziałem ekspertów z AGH, krakowskiego Instytutu Ekspertyz Sądowych oraz Laboratorium Kryminalistycznego KWP z Krakowa. W czasie pierwszego semestru w Politechnice Łódzkiej studenci wprowadzeni zostaną w tematykę chemii sądowej, technik kryminalistycznych, nowoczesnych technik analitycznych i obrazowania w kryminalistyce. Ponadto poznają podstawy chemometrii, logiki, a także biometrii w kryminalistyce oraz chemii i detekcji związków psychoaktywnych. W Krakowie w ramach wyjazdowego drugiego semestru zajęcia poprowadzą specjaliści z Wydziału Inżynierii Materiałowej i Ceramiki AGH, Instytutu Ekspertyz Sądowych im. prof. dra Jana Sehna oraz Laboratorium Kryminalistycznego KWP. Wykłady, laboratoria i ćwiczenia obejmować będą metody instrumentalne w analizie kryminalistycznej, eksperckiej oceny zdarzeń, analizy cyfrowych nośników danych, a także podstaw zachowań człowieka i innych tematów wiążących się ściśle z pracą z materiałem dowodowym.",
+    "typ": "kierunki_program"
+  },
+  {
+    "pytanie": "Jakie są perspektywy po ukończeniu kierunku Chemia w kryminalistyce na Politechnice Łódzkiej?",
+    "odpowiedz": "Interdyscyplinarność oferowanego wykształcenia pozwoli absolwentom tego kierunku uzyskać wszechstronną wiedzę z nowoczesnych metod analitycznych, stosowanych w badaniach kryminalistycznych czy w trakcie identyfikacji śladów zabezpieczonych na miejscu zdarzenia. Pozwoli również zyskać wiedzę z zakresu prawa, m.in. zagadnienia dotyczące wydawania opinii kryminalistycznych w procesie karnym. Ciekawa tematyka prac dyplomowych (semestr trzeci), praca z wybitnymi specjalistami z dziedziny kryminalistyki w Polsce, a przede wszystkim perspektywa atrakcyjnej pracy w laboratoriach kryminalistycznych policji, służby celnej, laboratoriach badawczych, kontrolnych oraz diagnostycznych to gwarancja satysfakcjonującego wyboru studiów w Politechnice Łódzkiej.",
+    "typ": "kierunki_perspektywy"
+  },
+  {
+    "pytanie": "Jakie są podstawowe informacje o kierunku Chemia w kryminalistyce na Politechnice Łódzkiej?",
+    "odpowiedz": "Studia na kierunku Chemia w kryminalistyce prowadzone są w trybie stacjonarnym. Studia obejmują trzy semestry kształcenia i kończą się uzyskaniem dyplomu studiów drugiego stopnia(tytułu magistra). Językiem wykładowym jest język polski.",
+    "typ": "kierunki_organizacja"
+  },
+  {
+    "pytanie": "Na czym polega kierunek Digital Management na Politechnice Łódzkiej?",
+    "odpowiedz": "Kierunek Digital Management odpowiada na aktualne wyzwania społeczno-gospodarcze, wynikające ze zmian technologicznych. Ma na celu przygotowanie specjalistów z zakresu zarządzania cyfrowego mających unikatowy zestaw kompetencji inżynierskich oraz umiejętności w obszarze najnowszych rozwiązań organizacyjnych oraz zarządczych, pozwalających na swobodne funkcjonowanie w środowisku wirtualnym i potrafiące je kreować. Kierunek Digital Management składa się z części menedżerskiej oraz z zakresu technologii informatycznych. Zaplanowane w toku studiów przedmioty wyposażają studentów w kompetencje cyfrowe niezbędne na współczesnym rynku pracy.",
+    "typ": "kierunki_opis"
+  },
+  {
+    "pytanie": "Jak wygląda program studiów na kierunku Digital Management na Politechnice Łódzkiej?",
+    "odpowiedz": "Program kierunku obejmuje zarówno wiedzę teoretyczną, jak i praktyczne umiejętności z zakresu technologii cyfrowych, analizy i zbierania danych, wizualizacji i prezentacji oraz projektowania cyfrowych rozwiązań biznesowych, co przygotowuje studentów do podjęcia pracy w różnych sektorach gospodarki. Wiedza z zakresu technologii informatycznych oraz zarządzania w gospodarce cyfrowej umożliwia studentom analizowanie i wdrażanie strategii cyfrowych oraz zrozumienie globalnych procesów gospodarczych. Kształcenie na tym kierunku opiera się na atrakcyjnych formach i metodach kształcenia, jak Design Thinking, Problem Based Learning, Challenge Base Learning i Flipped Education z uwzględnieniem kształcenia na odległość.",
+    "typ": "kierunki_program"
+  },
+  {
+    "pytanie": "Jakie są perspektywy po ukończeniu kierunku Digital Management na Politechnice Łódzkiej?",
+    "odpowiedz": "Po ukończeniu kierunku Digital Management zdobędziesz kompetencje z zakresu zarządzania organizacjami cyfrowymi, jak również z ekonomii i finansów, marketingu, zarządzania projektami oraz komunikacji w cyfrowym świecie. Będziesz biegle korzystał z nowoczesnych systemów informatycznych, wspomagających procesy decyzyjne w przedsiębiorstwach, jak aplikacje biznesowe czy oprogramowanie do symulacji procesów biznesowych, analizy danych i obróbki statystycznej oraz chmurowe systemy do zarządzania finansami przedsiębiorstwa. Poznasz zasady interakcji człowiek-komputer wraz z podstawami programowania, wykorzystuje oprogramowanie do modelowania inżynierskiego oraz technologie inżynierii odwrotnej w przedsiębiorstwie. Będziesz nie tylko biegle poruszał się w świecie cyfrowym i dostrzegał szanse rozwoju każdej organizacji, wynikające z fenomenu cyfrowej transformacji, ale także swobodnie funkcjonował w środowisku międzynarodowym, dzięki realizowaniu programu studiów w języku angielskim. Będziesz mógł szukać pracy jako analityk danych, data scientist, specjalista AI i Machine Learning, projektant UX/UI, kierownik projektów IT i wiele więcej.",
+    "typ": "kierunki_perspektywy"
+  },
+  {
+    "pytanie": "Jakie są podstawowe informacje o kierunku Digital Management na Politechnice Łódzkiej?",
+    "odpowiedz": "Studia na kierunku Digital Management prowadzone są w trybie stacjonarnym. Studia obejmują siedem semestrów kształcenia i kończą się uzyskaniem dyplomu studiów pierwszego stopnia(tytułu inżyniera). Językiem wykładowym jest język angielski.",
+    "typ": "kierunki_organizacja"
+  },
+  {
+    "pytanie": "Jakie są wymagania rekrutacyjne na kierunek Digital Management na Politechnice Łódzkiej?",
+    "odpowiedz": "Przedmioty obowiązkowe w procesie rekrutacji na kierunek Digital Management to matematyka (podstawa lub rozszerzenie) oraz język angielski (minimum 60% z poziomu rozszerzonego). Przedmiotami dodatkowymi są: fizyka, chemia, geografia, informatyka oraz dyplom zawodowy.",
+    "typ": "rekrutacja_wymagania"
+  },
+  {
+    "pytanie": "Na czym polega kierunek Menedżer produktów chemicznych na Politechnice Łódzkiej?",
+    "odpowiedz": "Kierunek menedżer produktów chemicznych to unikalna, nowoczesna propozycja studiów o charakterze międzydyscyplinarnym, realizowana we współpracy Wydziału Chemicznego oraz Wydziału Organizacji i Zarządzania. To doskonały wybór dla osób, które chcą połączyć pasję do nauk ścisłych z kompetencjami z zakresu zarządzania, marketingu i innowacji. Program kształcenia łączy wiedzę technologiczną z umiejętnościami biznesowymi, dzięki czemu absolwenci zyskują wyjątkowe przygotowanie do pracy na styku nauki i przemysłu. To kierunek dla tych, którzy chcą rozumieć zarówno procesy chemiczne, jak i rynkowe mechanizmy funkcjonowania produktów chemicznych — i skutecznie zarządzać ich rozwojem, produkcją oraz wdrażaniem na rynek.",
+    "typ": "kierunki_opis"
+  },
+  {
+    "pytanie": "Jak wygląda program studiów na kierunku Menedżer produktów chemicznych na Politechnice Łódzkiej?",
+    "odpowiedz": "Program oparty jest na ścisłej współpracy z przemysłem i obejmuje analizę potrzeb klientów w zakresie produktów chemicznych, uwzględniając aspekty jakościowe, logistyczne, ekologiczne i prawne; poznanie sposobów badania składu wyrobów chemicznych, kosmetycznych i farmaceutycznych oraz próbek środowiskowych. W ramach programu realizowane jest także projektowanie i wdrażanie nowych wyrobów chemicznych, zarządzanie ich cyklem życia, certyfikacja i logistyka. Studenci uzyskają również umiejętności miękkie, w tym niezbędne do pracy zespołowej.",
+    "typ": "kierunki_program"
+  },
+  {
+    "pytanie": "Jakie są perspektywy po ukończeniu kierunku Menedżer produktów chemicznych na Politechnice Łódzkiej?",
+    "odpowiedz": "Zdobyte kompetencje umożliwią pracę zarówno w laboratorium, dziale rozwoju produktów, dziale zarządzania jakością i bezpieczeństwem produktów, jak i w obszarze sprzedaży, czy doradztwa technicznego. Studia przygotowują do podjęcia pracy w dynamicznie rozwijających się gałęziach przemysłu: chemii gospodarczej, motoryzacji, budownictwie, farmacji, czy branży opakowań – wszędzie tam, gdzie nowoczesne materiały i technologie wymagają zrównoważonego zarządzania. Absolwent kierunku to specjalista łączący wiedzę z obszaru chemii z umiejętnościami menedżerskimi.",
+    "typ": "kierunki_perspektywy"
+  },
+  {
+    "pytanie": "Jakie są podstawowe informacje organizacyjne o kierunku Menedżer produktów chemicznych na Politechnice Łódzkiej?",
+    "odpowiedz": "Studia na kierunku Menedżer produktów chemicznych prowadzone są w trybie stacjonarnym. Studia obejmują siedem semestrów kształcenia i kończą się uzyskaniem dyplomu studiów pierwszego stopnia(tytulu inżyniera). Językiem wykładowym jest język polski.",
+    "typ": "kierunki_organizacja"
+  },
+  {
+    "pytanie": "Jakie są wymagania rekrutacyjne na kierunek Menedżer produktów chemicznych na Politechnice Łódzkiej?",
+    "odpowiedz": "Przedmiotami obowiązkowymi w procesie rekrutacji na kierunek Menedżer produktów chemicznych są matematyka (podstawa lub rozszerzenie) oraz język obcy (podstawa lub rozszerzenie). Przedmiotami dodatkowymi są: fizyka, chemia, geografia, informatyka oraz dyplom zawodowy.",
+    "typ": "rekrutacja_wymagania"
+  },
+  {
+    "pytanie": "Na czym polega kierunek Advanced Biobased and Bioinspired Materials na Politechnice Łódzkiej?",
+    "odpowiedz": "Program kierunku Advanced Biobased and Bioinspired Materials ma charakter interdyscyplinarny i łączy wybrane zagadnienia chemii, biologii, medycyny, fizyki i nauk technicznych. Studia kształcą w zakresie projektowania, wytwarzania i analizy właściwości materiałów funkcjonalnych o znaczeniu biologicznym i medycznym, ich zastosowań oraz metod utylizacji. Program uwzględnia także wiedzę o procesach technologicznych opartych na surowcach odnawialnych.",
+    "typ": "kierunki_opis"
+  },
+  {
+    "pytanie": "Jak wygląda program studiów na kierunku Advanced Biobased and Bioinspired Materials na Politechnice Łódzkiej?",
+    "odpowiedz": "Do głównych przedmiotów na kierunku Advanced Biobased and Bioinspired Materials należą m.in. Biochemistry, Biophysics, Synthesis and Physicochemical Properties of Polymer Components, Biomaterials Science and Technology, Modern Techniques in Biomaterials and Nanostructures Synthesis and Analysis, Bioresources, Bio-based Materials, Life Cycle, Biodegradation, Nanomaterials, Tuning of Biobased Materials’ Applicabilities’ Polymer Composites Mimicking Nature, Emerging Technologies Inspired by Nature, Supramolecular Self-Organisation Inspired by Nature. Program kierunku Advanced Biobased and Bioinspired Materials jest realizowany z wykorzystaniem nowoczesnych metod kształcenia opartych na rozwiązywaniu realnych problemów oraz pracy w grupie. Każdy student kierunku Advanced Biobased and Bioinspired Materials w ramach programu studiów realizuje co najmniej jeden semestr w ramach tzw. „Mobility Semester” na uczelni zagranicznej.",
+    "typ": "kierunki_program"
+  },
+  {
+    "pytanie": "Jakie są perspektywy po ukończeniu kierunku Advanced Biobased and Bioinspired Materials na Politechnice Łódzkiej?",
+    "odpowiedz": "Advanced Biobased and Bioinspired Materials to studia, które przygotują Cię do pracy związanej z kształtowaniem właściwości i analizą różnych materiałów, w tym biomateriałów i nanomateriałów, projektowaniem wyrobów o pożądanej funkcjonalności czy projektowaniem i analizowaniem materiałów pochodzenia biologicznego. Program studiów zaprojektowany został tak, aby zapewnić Ci dostęp do najnowszych informacji i metod wykorzystywanych w branży. Podczas studiów poznasz nie tylko zagadnienia z zakresu nauk ścisłych, ale także zastosowania technologii informatycznych czy analizy danych w branży. Zdobędziesz wiedzę niezbędną do rozpoczęcia własnej działalności gospodarczej. Przede wszystkim jednak nauczysz się samodzielnie rozwiązywać problemy oraz pracować w interdyscyplinarnych zespołach ze specjalistami z różnych dyscyplin naukowych. Jako absolwent możesz rozpocząć karierę w przedsiębiorstwach, jednostkach naukowych, badawczo-rozwojowych, konsultingowych i certyfikujących, związanych z szeroko rozumianą dziedziną biomateriałów i materiałów funkcjonalnych, a także w innych pokrewnych gałęziach przemysłu oraz w sektorze nowoczesnych technologii.",
+    "typ": "kierunki_perspektywy"
+  },
+  {
+    "pytanie": "Jakie są podstawowe informacje organizacyjne o kierunku Advanced Biobased and Bioinspired Materials na Politechnice Łódzkiej?",
+    "odpowiedz": "Studia na kierunku Advanced Biobased and Bioinspired Materials prowadzone są w trybie stacjonarnym. Studia obejmują osiem semestrów kształcenia i kończą się uzyskaniem dyplomu studiów pierwszego stopnia(tytulu inżyniera). Językiem wykładowym jest język angielski.",
+    "typ": "kierunki_organizacja"
+  },
+  {
+    "pytanie": "Jakie są wymagania rekrutacyjne na kierunku Advanced Biobased and Bioinspired Materials na Politechnice Łódzkiej?",
+    "odpowiedz": "Przedmiotami obowiązkowymi w procesie rekrutacji na kierunek Advanced Biobased and Bioinspired Materials są matematyka (podstawa lub rozszerzenie) oraz język angielski (minimum 60% z rozszerzenia). Przedmiotami dodatkowymi są: fizyka, chemia oraz dyplom zawodowy.",
+    "typ": "rekrutacja_wymagania"
   }
 ]
+

@@ -3,6 +3,9 @@ import "./App.css"
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+
+
 function Header() {
     return (
         <header>
@@ -22,14 +25,14 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping }) {
     return (
         <div className="bg-gradient-to-b from-gray-700 to-gray-600 w-5/6 flex-grow rounded-xl shadow-lg p-6 overflow-y-auto relative">
             <ul className="pb-40">
-                <li className="p-3 space-y-5 rounded-lg text-lg max-w-3xl whitespace-normal bg-[#505050] text-[#ffffff] ml-auto mb-6">
+                <li className="p-3 space-y-5 rounded-lg text-lg max-w-3xl whitespace-normal bg-[#002147] text-[#ffffff] mr-auto mb-6">
                     Jestem Tulbot, chatbot Politechniki Łódzkiej. W czym mogę Ci dzisiaj pomóc?
                 </li>
                 {messages.map((msg, idx) => (
                     <li
                         key={idx}
                         className={`p-3 space-y-3 rounded-lg text-lg max-w-3xl whitespace-normal mb-6 ${
-                            msg.sender === "BOT"
+                            msg.sender === "USER"
                                 ? "bg-[#505050] text-[#ffffff] ml-auto"
                                 : "bg-[#002147] text-[#ffffff] mr-auto"
                         }`}
@@ -103,8 +106,12 @@ function App() {
         setFollowups([]);
         setInput("");
 
+        const conversationParam = conversationId
+            ? `&conversationId=${encodeURIComponent(conversationId)}`
+            : "";
+
         const eventSource = new EventSource(
-            `http://localhost:8080/api/conversation/ask?content=${encodeURIComponent(text)}&conversationId=${conversationId || ""}`
+            `${API_BASE_URL}/api/conversation/ask?content=${encodeURIComponent(text)}${conversationParam}`
         );
 
         eventSource.onmessage = (event) => {

@@ -4,6 +4,9 @@ import chatbot.backend.domain.entities.*;
 import chatbot.backend.domain.enums.Sender;
 import chatbot.backend.domain.repositories.IConversationRepository;
 import chatbot.backend.infrastructure.adapters.ChatbotGateway;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.springframework.ai.chat.messages.SystemMessage;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -59,23 +62,26 @@ public class ConversationService {
 
         Conversation conversation = getConversationById(conversationId);
 
-        String systemInstruction =
-        """
-        Jesteś Tulbotem, chatbotem odpowiadającym na pytania o Politechnice Łódzkiej.
-        Odpowiadaj wyłącznie krótko i konkretnie.
-        Nie cytuj pytania użytkownika.
-        Nie odwołuj się do FAQ, dokumentów ani kontekstu.
-        Jeśli brak informacji, poinformuj o tym wprost.
-        Jeśli pytanie nie dotyczy Politechniki Łódzkiej, grzecznie o tym poinformuj.
-        """;
+        String rewriteContext = conversation.getMessages().stream()
+                .skip(Math.max(0, conversation.getMessages().size() - 4))
+                .map(m -> m.getSender() == Sender.BOT
+                        ? "BOT: " + m.getContent()
+                        : "UŻYTKOWNIK: " + m.getContent())
+                .collect(Collectors.joining("\n"));
+
+        String fixedContent = chatbotGateway.rewrite(content, rewriteContext);
+
+        System.out.println(fixedContent);
 
         List<Document> similarDocs = vectorStore.similaritySearch(
                 SearchRequest.builder()
-                        .query(content)
-                        .topK(5)
+                        .query(fixedContent)
+                        .topK(7)
                         .similarityThreshold(0.5)
                         .build()
         );
+
+        System.out.println(similarDocs);
 
         String faqsContext = similarDocs.isEmpty() ? "Brak dostępnych informacji w bazie wiedzy." : similarDocs.stream()
                 .map(d ->
@@ -86,30 +92,13 @@ public class ConversationService {
                 .collect(Collectors.joining("\n"));
 
         String shortHistory = conversation.getMessages().stream()
-                .skip(Math.max(0, conversation.getMessages().size() - 3))
+                .skip(Math.max(0, conversation.getMessages().size() - 4))
                 .map(m -> m.getSender() == Sender.BOT
-                        ? "Tulbot odpowiedział: " + m.getContent()
-                        : "Użytkownik zapytał: " + m.getContent())
+                        ? "BOT: " + m.getContent()
+                        : "UŻYTKOWNIK: " + m.getContent())
                 .collect(Collectors.joining("\n"));
 
-        String promptText = """
-        %s
-        
-        Kontekst rozmowy:
-        %s
-        
-        Dostępne informacje (FAQ):
-        %s
-        
-        Aktualne pytanie użytkownika:
-        %s
-        
-        Odpowiedz WYŁĄCZNIE na aktualne pytanie.
-        Nie cytuj pytania.
-        Nie streszczaj kontekstu.
-        """.formatted(systemInstruction, shortHistory, faqsContext, content);
-
-        Prompt prompt = new Prompt(promptText);
+        Prompt prompt = getPrompt(fixedContent, faqsContext, shortHistory);
 
         StringBuilder responseBuilder = new StringBuilder();
         StringBuilder buffer = new StringBuilder();
@@ -143,12 +132,7 @@ public class ConversationService {
                     botMessage.setConversationId(conversationId);
                     conversation.sendMessage(botMessage);
 
-                    String followupPrompt = "Zaproponuj dokładnie 3 krótkie pytania,\n" +
-                            "które logicznie wynikają z odpowiedzi bota\n" +
-                            "i dotyczą Politechniki Łódzkiej.\n" +
-                            "Nie powtarzaj pytania użytkownika.\n" +
-                            "Zwróć wyłącznie tablicę JSON stringów:\n\n" +
-                            "\n\nOdpowiedź bota: " + responseBuilder;
+                    String followupPrompt = "Odpowiedź bota: " + responseBuilder;
 
                     Flux<String> followups = chatbotGateway.followups(followupPrompt)
                             .map(followupsJson ->
@@ -164,6 +148,37 @@ public class ConversationService {
                     System.err.println("Streaming error: " + err.getMessage());
                     return Flux.just("ERROR: " + err.getMessage());
                 });
+    }
+
+    private static @NonNull Prompt getPrompt(String content, String faqsContext, String shortHistory) {
+        String systemPrompt =
+                """
+                Jesteś Tulbotem, chatbotem odpowiadającym wyłącznie na pytania o Politechnice Łódzkiej.
+                Odpowiadaj wyłącznie na podstawie przekazanego kontekstu.
+                Nie korzystaj z wiedzy spoza kontekstu i niczego nie dopowiadaj.
+                Odpowiedzi formułuj krótko i konkretnie.
+                Nie cytuj pytania użytkownika.
+                Jeśli w kontekście nie ma informacji potrzebnej do odpowiedzi, powiedz o tym wprost.
+                Jeśli pytanie nie dotyczy Politechniki Łódzkiej, poinformuj o tym uprzejmie.
+                Zawsze pozostawaj w roli Tulbota.
+                """;
+
+        String userPrompt =
+            """
+            [KONTEKST – JEDYNE ŹRÓDŁO WIEDZY]
+            %s
+            
+            [KONTEKST DIALOGOWY – NIE JEST ŹRÓDŁEM WIEDZY]
+            %s
+            
+            [AKTUALNE PYTANIE UŻYTKOWNIKA]
+            %s
+            """.formatted(faqsContext, shortHistory, content);
+
+        return new Prompt(List.of(
+                new SystemMessage(systemPrompt),
+                new UserMessage(userPrompt)
+        ));
     }
 
     public Flux<String> startAndStreamBotResponse(String userContent) {
