@@ -1,9 +1,10 @@
 package chatbot.backend.application.services;
 
+import chatbot.backend.application.common.interfaces.RerankerGateway;
 import chatbot.backend.domain.entities.*;
 import chatbot.backend.domain.enums.Sender;
 import chatbot.backend.domain.repositories.IConversationRepository;
-import chatbot.backend.infrastructure.adapters.ChatbotGateway;
+import chatbot.backend.application.common.interfaces.ChatbotGateway;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -24,12 +25,14 @@ public class ConversationService {
     private final IConversationRepository conversationRepository;
     private final ChatbotGateway chatbotGateway;
     private final VectorStore vectorStore;
+    private final RerankerGateway rerankerGateway;
 
     @Autowired
-    public ConversationService(IConversationRepository conversationRepository,  ChatbotGateway chatbotGateway,  VectorStore vectorStore) {
+    public ConversationService(IConversationRepository conversationRepository,  ChatbotGateway chatbotGateway,  VectorStore vectorStore, RerankerGateway rerankerGateway) {
         this.conversationRepository = conversationRepository;
         this.chatbotGateway = chatbotGateway;
         this.vectorStore = vectorStore;
+        this.rerankerGateway = rerankerGateway;
     }
 
     public Conversation startConversation(){
@@ -76,14 +79,17 @@ public class ConversationService {
         List<Document> similarDocs = vectorStore.similaritySearch(
                 SearchRequest.builder()
                         .query(fixedContent)
-                        .topK(7)
+                        .topK(15)
                         .similarityThreshold(0.5)
                         .build()
         );
 
-        System.out.println(similarDocs);
+        List<Document> reranked = rerankerGateway.rerank(fixedContent, similarDocs);
+        List<Document> limitReranked = reranked.stream().limit(5).toList();
 
-        String faqsContext = similarDocs.isEmpty() ? "Brak dostępnych informacji w bazie wiedzy." : similarDocs.stream()
+        System.out.println("\n" + limitReranked);
+
+        String faqsContext = limitReranked.isEmpty() ? "Brak dostępnych informacji w bazie wiedzy." : limitReranked.stream()
                 .map(d ->
                     """
                     [INFORMACJA]

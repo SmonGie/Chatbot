@@ -13,7 +13,7 @@ spring:
       chat:
         options:
           model: SpeakLeash/bielik-11b-v2.3-instruct:Q4_K_M
-          temperature: 0.2
+          temperature: 0.4
           top_p: 0.2
       embedding:
         model: mxbai-embed-large:335m

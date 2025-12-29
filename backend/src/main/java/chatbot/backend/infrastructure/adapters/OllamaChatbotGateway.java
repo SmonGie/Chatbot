@@ -1,5 +1,6 @@
 package chatbot.backend.infrastructure.adapters;
 
+import chatbot.backend.application.common.interfaces.ChatbotGateway;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -30,8 +31,9 @@ public class OllamaChatbotGateway implements ChatbotGateway {
     public Flux<String> followups(String answer) {
         String instruction =
             """
-            Na podstawie tej odpowiedzi wygeneruj maksymalnie 10 follow-up questions, bez pomijania kluczowych słów, które student Politechniki Łódzkiej mógłby zadać jako następne.
+            Na podstawie tej odpowiedzi wygeneruj maksymalnie 7 follow-up questions, bez pomijania kluczowych słów, które student Politechniki Łódzkiej mógłby zadać jako następne.
             Zwróć tylko listę pytań w formacie JSON (np. ["pytanie 1", "pytanie 2"]), bez dodatkowego tekstu.
+            Trzymaj się tematu rozmowy.
 
             Odpowiedź:
             %s
@@ -67,6 +69,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
                     - Nie zmieniaj sensu pytania
                     - Uzupełnij niejednoznaczne zapytania, poprzez dodanie kluczowych słów
                     - Zwróć tylko przepisane pytanie
+                    - Nie dopytuj się o dodatkowe informacje
                 """),
                 new UserMessage(
                     """

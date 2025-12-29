@@ -25,20 +25,22 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping }) {
     return (
         <div className="bg-gradient-to-b from-gray-700 to-gray-600 w-5/6 flex-grow rounded-xl shadow-lg p-6 overflow-y-auto relative">
             <ul className="pb-40">
-                <li className="p-3 space-y-5 rounded-lg text-lg max-w-3xl whitespace-normal bg-[#002147] text-[#ffffff] mr-auto mb-6">
+                <li className="p-3 space-y-5 rounded-lg text-lg max-w-3xl whitespace-normal bg-[#002147] text-[#ffffff] mr-auto mb-6 leading-relaxed">
                     Jestem Tulbot, chatbot Politechniki Łódzkiej. W czym mogę Ci dzisiaj pomóc?
                 </li>
                 {messages.map((msg, idx) => (
                     <li
                         key={idx}
-                        className={`p-3 space-y-3 rounded-lg text-lg max-w-3xl whitespace-normal mb-6 ${
+                        className={`p-3 rounded-lg text-lg max-w-3xl whitespace-normal mb-6 leading-relaxed ${
                             msg.sender === "USER"
                                 ? "bg-[#505050] text-[#ffffff] ml-auto"
                                 : "bg-[#002147] text-[#ffffff] mr-auto"
                         }`}
                     >
                         {msg.sender === "BOT" ? (
-                            <div
+                            <div className ="prose prose-invert max-w-none leading-[1.8] prose-p:my-2 prose-ul:pl-5 prose-ul:my-2 prose-li:my-1 prose-h2:text-lg
+                            prose-h2:mt-4 prose-h2:mb-2 prose-h3:text-base prose-a:text-blue-400 prose-a:border-b prose-a:border-blue-400/60
+                            hover:prose-a:text-blue-300 hover:prose-a:border-blue-300 prose-p:text-lg prose-li:text-lg text-[#ffffff]"
                                 dangerouslySetInnerHTML={{
                                     __html: DOMPurify.sanitize(
                                         marked.parse(msg.content, {
@@ -196,9 +198,9 @@ function App() {
 function TypingIndicator() {
     return (
         <div className="flex space-x-1 ml-2">
-            <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-0"></span>
-            <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-150"></span>
-            <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-300"></span>
+            <span className="w-3 h-3 bg-white rounded-full animate-bounce delay-0"></span>
+            <span className="w-3 h-3 bg-white rounded-full animate-bounce delay-300"></span>
+            <span className="w-3 h-3 bg-white rounded-full animate-bounce delay-450"></span>
         </div>
     )
 }
