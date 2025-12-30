@@ -3,9 +3,6 @@ import "./App.css"
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
-
-
 function Header() {
     return (
         <header>
@@ -23,14 +20,14 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping }) {
         endRef.current?.scrollIntoView({ behavior: "smooth" })
     }, [messages, followups, isTyping])
     return (
-        <div className="bg-gradient-to-b from-gray-700 to-gray-600 w-5/6 flex-grow rounded-xl shadow-lg p-6 overflow-y-auto relative">
+        <div className="bg-linear-to-b from-gray-700 to-gray-600 w-5/6 grow rounded-xl shadow-lg p-6 overflow-y-auto relative">
             <ul className="pb-40">
                 <li className="p-3 space-y-5 rounded-lg text-lg max-w-3xl whitespace-normal bg-[#002147] text-[#ffffff] mr-auto mb-6 leading-relaxed">
                     Jestem Tulbot, chatbot Politechniki Łódzkiej. W czym mogę Ci dzisiaj pomóc?
                 </li>
-                {messages.map((msg, idx) => (
+                {messages.map((msg, index) => (
                     <li
-                        key={idx}
+                        key={index}
                         className={`p-3 rounded-lg text-lg max-w-3xl whitespace-normal mb-6 leading-relaxed ${
                             msg.sender === "USER"
                                 ? "bg-[#505050] text-[#ffffff] ml-auto"
@@ -55,7 +52,7 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping }) {
                             <span>{msg.content}</span>
                         )}
 
-                        {msg.sender === "BOT" && isTyping && idx === messages.length - 1 && (
+                        {msg.sender === "BOT" && isTyping && index === messages.length - 1 && (
                             <div className="mt-1 flex items-center space-x-2">
                                 <span>Bot pisze</span>
                                 <TypingIndicator />
@@ -63,17 +60,15 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping }) {
                         )}
                     </li>
                 ))}
-
-
                 {followups.length > 0 && (
                     <div className="mt-6 flex flex-wrap gap-3 justify-center">
-                        {followups.map((q, i) => (
+                        {followups.map((question, i) => (
                             <button
                                 key={i}
-                                onClick={() => onFollowupClick(q)}
+                                onClick={() => onFollowupClick(question)}
                                 className="bg-[#ffc107] hover:bg-yellow-400 text-gray-900 px-4 py-2 rounded-lg transition-all hover:scale-103 shadow-md font-semibold text-lg"
                             >
-                                {q}
+                                {question}
                             </button>
                         ))}
                     </div>
@@ -108,12 +103,8 @@ function App() {
         setFollowups([]);
         setInput("");
 
-        const conversationParam = conversationId
-            ? `&conversationId=${encodeURIComponent(conversationId)}`
-            : "";
-
         const eventSource = new EventSource(
-            `${API_BASE_URL}/api/conversation/ask?content=${encodeURIComponent(text)}${conversationParam}`
+            `http://localhost:8080/api/conversation/ask?content=${encodeURIComponent(text)}&conversationId=${conversationId || ""}`
         );
 
         eventSource.onmessage = (event) => {
@@ -164,7 +155,7 @@ function App() {
     return (
         <div className="min-h-screen flex flex-col bg-[#002147]">
             <Header />
-            <main className="flex flex-col items-center flex-grow pb-4 w-full">
+            <main className="flex flex-col items-center grow pb-4 w-full">
                 <ChatWindow
                     messages={messages}
                     followups={followups}
@@ -178,7 +169,7 @@ function App() {
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
                         disabled={isLoading}
-                        className="flex-grow p-4 text-lg rounded-l-lg border-none outline-none bg-gray-200 text-[#2f2e31] placeholder-[#2f2e31] disabled:opacity-50"
+                        className="grow p-4 text-lg rounded-l-lg border-none outline-none bg-gray-200 text-[#2f2e31] placeholder-[#2f2e31] disabled:opacity-50"
                         placeholder={isLoading ? "Bot pisze..." : "Wpisz wiadomość..."}
                     />
                     <button
@@ -200,7 +191,7 @@ function TypingIndicator() {
         <div className="flex space-x-1 ml-2">
             <span className="w-3 h-3 bg-white rounded-full animate-bounce delay-0"></span>
             <span className="w-3 h-3 bg-white rounded-full animate-bounce delay-300"></span>
-            <span className="w-3 h-3 bg-white rounded-full animate-bounce delay-450"></span>
+            <span className="w-3 h-3 bg-white rounded-full animate-bounce delay-600"></span>
         </div>
     )
 }

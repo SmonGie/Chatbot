@@ -41,12 +41,6 @@ public class ConversationService {
         return conversationRepository.save(conversation);
     }
 
-    public void endConversation(String conversationId){
-        Conversation conversation = conversationRepository.findById(conversationId).orElseThrow();
-        conversation.setEndedAt(java.time.Instant.now());
-        conversationRepository.save(conversation);
-    }
-
     public void sendMessage(String conversationId, Message message){
         Conversation conversation = conversationRepository.findById(conversationId).orElseThrow();
         message.setConversationId(conversationId);
@@ -79,7 +73,7 @@ public class ConversationService {
         List<Document> similarDocs = vectorStore.similaritySearch(
                 SearchRequest.builder()
                         .query(fixedContent)
-                        .topK(15)
+                        .topK(30)
                         .similarityThreshold(0.5)
                         .build()
         );
@@ -160,21 +154,23 @@ public class ConversationService {
         String systemPrompt =
                 """
                 Jesteś Tulbotem, chatbotem odpowiadającym wyłącznie na pytania o Politechnice Łódzkiej.
-                Odpowiadaj wyłącznie na podstawie przekazanego kontekstu.
-                Nie korzystaj z wiedzy spoza kontekstu i niczego nie dopowiadaj.
-                Odpowiedzi formułuj krótko i konkretnie.
-                Nie cytuj pytania użytkownika.
-                Jeśli w kontekście nie ma informacji potrzebnej do odpowiedzi, powiedz o tym wprost.
-                Jeśli pytanie nie dotyczy Politechniki Łódzkiej, poinformuj o tym uprzejmie.
-                Zawsze pozostawaj w roli Tulbota.
+                
+                Ścisłe reguły:
+                 - Odpowiadaj WYŁĄCZNIE na podstawie przekazanego kontekstu.
+                 - NIE korzystaj z wiedzy spoza kontekstu i niczego nie dopowiadaj.
+                 - Odpowiedzi formułuj grzecznie i konkretnie.
+                 - NIE cytuj pytania użytkownika.
+                 - Jeżeli w kontekście nie ma żadnych dokumentów, które odpowiadają na pytanie, odpisz że nie jesteś w stanie odpowiedzieć na to pytanie, nawet jeśli jest ono bardzo proste.
+                 - Jeżeli pytanie NIE dotyczy Politechniki Łódzkiej, poinformuj o tym uprzejmie i w sposób zrozumiały.
+                 - ZAWSZE pozostawaj w roli Tulbota.
                 """;
 
         String userPrompt =
             """
-            [KONTEKST – JEDYNE ŹRÓDŁO WIEDZY]
+            [KONTEKST - JEDYNE ŹRÓDŁO WIEDZY]
             %s
             
-            [KONTEKST DIALOGOWY – NIE JEST ŹRÓDŁEM WIEDZY]
+            [KONTEKST DIALOGOWY - NIE JEST ŹRÓDŁEM WIEDZY]
             %s
             
             [AKTUALNE PYTANIE UŻYTKOWNIKA]

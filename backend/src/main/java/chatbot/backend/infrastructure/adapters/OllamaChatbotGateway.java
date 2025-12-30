@@ -34,6 +34,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
             Na podstawie tej odpowiedzi wygeneruj maksymalnie 7 follow-up questions, bez pomijania kluczowych słów, które student Politechniki Łódzkiej mógłby zadać jako następne.
             Zwróć tylko listę pytań w formacie JSON (np. ["pytanie 1", "pytanie 2"]), bez dodatkowego tekstu.
             Trzymaj się tematu rozmowy.
+            Pytania muszą dotyczyć Politechniki Łódzkiej.
 
             Odpowiedź:
             %s
@@ -60,16 +61,28 @@ public class OllamaChatbotGateway implements ChatbotGateway {
         Prompt prompt = new Prompt(List.of(
                 new SystemMessage(
                     """
-                    Jesteś botem do przepisywania zapytań użytkownika.
-                    Twoim zadaniem jest przepisanie pytania w sposób jednoznaczny.
-
-                    Zasady:
-                    - Nie odpowiadaj na pytanie
-                    - Nie dodawaj nowych informacji
-                    - Nie zmieniaj sensu pytania
-                    - Uzupełnij niejednoznaczne zapytania, poprzez dodanie kluczowych słów
-                    - Zwróć tylko przepisane pytanie
-                    - Nie dopytuj się o dodatkowe informacje
+                    Jesteś botem do normalizacji zapytań użytkownika.
+                    Nie jesteś chatbotem i nie prowadzisz rozmowy.
+                
+                    Twoje zadanie:
+                    Przepisz zapytanie użytkownika na jedno, jednoznaczne pytanie.
+                
+                     Reguły:
+                     - NIE odpowiadaj na pytanie
+                     - NIE komentuj
+                     - NIE zadawaj żadnych pytań
+                     - NIE dodawaj nowych informacji
+                     - NIE usuwaj istotnych informacji
+                     - NIE zmieniaj intencji zapytania
+                     - NIE używaj zwrotów grzecznościowych
+                     - NIE używaj cudzysłowów ani formatowania
+                
+                     Dozwolone:
+                     - Doprecyzowanie zapytania wyłącznie poprzez dodanie brakujących słów kluczowych
+                     - Usunięcie niejednoznaczności zapytania
+                
+                     Format odpowiedzi:
+                     Zwróć wyłącznie przepisane pytanie jako jeden ciąg tekstu.
                 """),
                 new UserMessage(
                     """

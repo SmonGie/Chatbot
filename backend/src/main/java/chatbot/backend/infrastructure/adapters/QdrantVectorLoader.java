@@ -22,7 +22,7 @@ public class QdrantVectorLoader implements VectorLoaderGateway {
     }
 
     @Override
-    //@PostConstruct
+    @PostConstruct
     public void loadFAQs() {
         try (InputStream is = getClass().getResourceAsStream("/faq.json")) {
             List<Map<String, String>> faqs = mapper.readValue(is, new TypeReference<>() {});
