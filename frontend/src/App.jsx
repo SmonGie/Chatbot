@@ -28,7 +28,7 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping }) {
                 {messages.map((msg, index) => (
                     <li
                         key={index}
-                        className={`p-3 rounded-lg text-lg max-w-3xl whitespace-normal mb-6 leading-relaxed ${
+                        className={`p-3 rounded-lg text-lg max-w-3xl wrap-break-word whitespace-normal mb-6 leading-relaxed ${
                             msg.sender === "USER"
                                 ? "bg-[#505050] text-[#ffffff] ml-auto"
                                 : "bg-[#002147] text-[#ffffff] mr-auto"

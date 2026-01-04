@@ -27,10 +27,7 @@ public class OnnxRerankerGateway implements RerankerGateway {
         }
 
         return documents.stream()
-                .map(doc -> Map.entry(
-                        doc,
-                        reranker.score(query,  doc.getMetadata().get("pytanie").toString()).content()
-                ))
+                .map(doc -> Map.entry(doc, reranker.score(query,  doc.getMetadata().get("pytanie").toString()).content()))
                 .sorted((docA, docB) -> Double.compare(docB.getValue(), docA.getValue()))
                 .map(Map.Entry::getKey)
                 .toList();

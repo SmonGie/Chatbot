@@ -2,6 +2,7 @@ package chatbot.backend.application.services;
 
 import chatbot.backend.application.common.interfaces.RerankerGateway;
 import chatbot.backend.domain.entities.*;
+import chatbot.backend.domain.enums.FollowupMethod;
 import chatbot.backend.domain.enums.Sender;
 import chatbot.backend.domain.repositories.IConversationRepository;
 import chatbot.backend.application.common.interfaces.ChatbotGateway;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,20 +70,10 @@ public class ConversationService {
 
         String fixedContent = chatbotGateway.rewrite(content, rewriteContext);
 
-        System.out.println(fixedContent);
-
-        List<Document> similarDocs = vectorStore.similaritySearch(
-                SearchRequest.builder()
-                        .query(fixedContent)
-                        .topK(30)
-                        .similarityThreshold(0.5)
-                        .build()
-        );
+        List<Document> similarDocs = findPESimilarDocuments(fixedContent);
 
         List<Document> reranked = rerankerGateway.rerank(fixedContent, similarDocs);
         List<Document> limitReranked = reranked.stream().limit(5).toList();
-
-        System.out.println("\n" + limitReranked);
 
         String faqsContext = limitReranked.isEmpty() ? "Brak dostępnych informacji w bazie wiedzy." : limitReranked.stream()
                 .map(d ->
@@ -132,22 +124,29 @@ public class ConversationService {
                     botMessage.setConversationId(conversationId);
                     conversation.sendMessage(botMessage);
 
-                    String followupPrompt = "Odpowiedź bota: " + responseBuilder;
+                    String answer = responseBuilder.toString();
 
-                    Flux<String> followups = chatbotGateway.followups(followupPrompt)
-                            .map(followupsJson ->
-                                    "data: {\"type\":\"followups\",\"options\":" + followupsJson + "}\n\n"
-                            )
+                    List<String> similarQuestions = limitReranked.stream()
+                            .map(doc -> doc.getMetadata().get("pytanie").toString())
+                            .toList();
+
+                    String category = limitReranked.stream()
+                            .map(doc -> doc.getMetadata().get("typ").toString())
+                            .collect(Collectors.groupingBy(typ -> typ, Collectors.counting()))
+                                    .entrySet().stream()
+                                    .max(Map.Entry.comparingByValue())
+                                    .map(Map.Entry::getKey)
+                                    .orElse("ogolne");
+
+                    Flux<String> followups = generateFollowups(FollowupMethod.TEMPLATE_BASED, answer, similarQuestions, category)
+                            .map(followupsJson -> "data: {\"type\":\"followups\",\"options\":" + followupsJson + "}\n\n")
                             .onErrorReturn("data: {\"type\":\"followups\",\"options\":[]}\n\n");
 
                     return Flux.concat(finalText, followups);
-                }))
+                })
                 .publishOn(Schedulers.boundedElastic())
                 .doFinally(_ -> conversationRepository.save(conversation))
-                .onErrorResume(err -> {
-                    System.err.println("Streaming error: " + err.getMessage());
-                    return Flux.just("ERROR: " + err.getMessage());
-                });
+                .onErrorResume(err -> Flux.just("ERROR: " + err.getMessage())));
     }
 
     private static @NonNull Prompt getPrompt(String content, String faqsContext, String shortHistory) {
@@ -187,6 +186,29 @@ public class ConversationService {
         Conversation conversation = startConversation();
         String id = "data: {\"type\":\"conversationId\",\"id\":\"" + conversation.getId() + "\"}\n\n";
         return Flux.concat(Flux.just(id), streamBotResponse(conversation.getId(), userContent));
+    }
+
+    public Flux<String> generateFollowups(
+            FollowupMethod method,
+            String answer,
+            List<String> similarQuestions,
+            String category)
+    {
+        return switch (method) {
+            case PROMPT_ENGINEERING -> chatbotGateway.followupsWithPromptEngineering(answer);
+            case RAG_SIMILAR_QUESTIONS -> chatbotGateway.followupsWithRAG(similarQuestions);
+            case TEMPLATE_BASED -> chatbotGateway.followupsWithTemplates(category);
+        };
+    }
+
+    private List<Document> findPESimilarDocuments(String query) {
+        return vectorStore.similaritySearch(
+                SearchRequest.builder()
+                        .query(query)
+                        .topK(30)
+                        .similarityThreshold(0.5)
+                        .build()
+        );
     }
 
 }

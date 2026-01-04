@@ -1,9 +1,5 @@
 package chatbot.backend.domain.entities;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.UUID;
-
 public class ConversationFactory {
     private ConversationFactory() {}
 

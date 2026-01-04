@@ -370,7 +370,7 @@
     "typ": "organizacja_regulaminy"
   },
   {
-    "pytanie": "Jakie warunki trzeba spełnić, aby Prodziekan mógł przywrócić studenta w prawach studenta po skreśleniu?",
+    "pytanie": "Jakie ograniczenia dotyczą urlopu długoterminowego w PŁ?",
     "odpowiedz": "Powtórny wpis (przywrócenie) jest możliwy pod następującymi warunkami, które muszą być spełnione łącznie, m.in.: od daty uprawomocnienia decyzji o skreśleniu nie upłynęło więcej niż 5 lat, osoba wnioskująca o przywrócenie nie była wcześniej przywracana w prawach studenta na tym samym poziomie studiów, skreślenie z listy studentów nie nastąpiło w konsekwencji ukarania karą dyscyplinarną wydalenia z Uczelni, kierunek studiów, o przywrócenie na który osoba wnioskuje, jest nadal prowadzony, osoba wnioskująca o przywrócenie przedstawi aktualne orzeczenie lekarskie, stwierdzające brak przeciwwskazań zdrowotnych do studiowania na danym kierunku studiów, wydane na podstawie skierowania wystawionego przez właściwe władze Uczelni; w przypadku osób wznawiających studia wyłącznie w celu złożenia egzaminu dyplomowego, bez uzupełniania pozostałych wymagań określonych w programie studiów, nie jest wymagane przedstawienie orzeczenia lekarskiego, stwierdzającego brak przeciwwskazań zdrowotnych do studiowania na danym kierunku studiów, osoba ubiegająca się o powtórny wpis na listę studentów dopełniła, po skreśleniu z listy studentów, obowiązku rozliczenia się z zobowiązań finansowych i materialnych wobec Uczelni. Decyzję w przedmiocie powtórnego wpisu na listę studentów i wznowienia studiów na określonym kierunku i programie studiów podejmuje Prodziekan. Prodziekan może odmówić powtórnego wpisu na listę studentów i przywrócenia w prawach studenta jeżeli poprzedni przebieg studiów nie gwarantuje ich ukończenia w terminie wynikającym z planu studiów lub, gdy nastąpiła zmiana programu studiów uniemożliwiająca kontynuację studiów na tym samym kierunku.",
     "typ": "organizacja_regulaminy"
   },
@@ -395,7 +395,7 @@
     "typ": "organizacja_egzaminy_dyplomowe"
   },
   {
-    "pytanie":"Czy studia są płatne",
+    "pytanie":"Czy studia są płatne?",
     "odpowiedz":"Posiadanie obywatelstwa polskiego uprawnia Cię do studiowania bez ponoszenia opłat za studia. Jednak, jeżeli chcesz studiować na studiach niestacjonarnych, to takie studia są płatne za każdy semestr. Wysokość opłat zależy od kierunku, a informacja taka jest dostępna na stronie rekrutacji https://rekrutacja.p.lodz.pl/studia-i-i-ii-stopnia/rekrutuj/oplaty#studia_i_stopnia%3Eop%C5%82ata_za_studia.",
     "typ": "studia_rekrutacja"
   },
@@ -440,17 +440,17 @@
     "typ":"uczelnia_historia"
   },
   {
-    "pytanie":"Jakie sukcesy osiągają studenci i pracownicy Politechniki Łódzka",
+    "pytanie":"Jakie sukcesy osiągają studenci i pracownicy Politechniki Łódzka?",
     "odpowiedz":"Politechnika Łódzka posiada na swoim koncie wiele osiągnięć naukowych oraz sukcesów, a ich wymienienie zajęłoby za dużo czasów, więcej możesz dowiedzieć się na stronie https://p.lodz.pl/uczelnia/nasze-sukcesy",
     "typ":"uczelnia_historia"
   },
   {
-    "pytanie":"Kto jest aktualnie rektorem Politechniki Łódzkiej",
+    "pytanie":"Kto jest aktualnie rektorem Politechniki Łódzkiej?",
     "odpowiedz":"Rektorem Politechniki Łódzkiej jest prof. dr hab. inż. Krzysztof Jóźwik ",
     "typ":"uczelnia_jednostki"
   },
   {
-    "pytanie":"Kto jest aktualnie prorektorem ds. nauki Politechniki Łódzkiej",
+    "pytanie":"Kto jest aktualnie prorektorem ds. nauki Politechniki Łódzkiej?",
     "odpowiedz":"Prorektorem ds. nauki Politechniki Łódzkiej jest prof. dr hab. inż. Łukasz Albrecht",
     "typ":"uczelnia_jednostki"
   },
@@ -3295,11 +3295,6 @@
     "typ": "zycie_studenckie_organizacje"
   },
   {
-    "pytanie": "Jakie koła naukowe, kluby lub organizacje studenckie działają na Wydziale Chemicznym?",
-    "odpowiedz": "Na Wydziale Chemicznym działają następujące organizacje studenckie: Koło Naukowe „Trotyl”; Studenckie Koło Naukowe „Polimer”; Koło Nanotechnologów NANO. Więcej informacji możesz dowiedzieć się po wejściu na stronę: https://p.lodz.pl/studenci/kola-naukowe-i-organizacje-studenckie. Serdecznie zapraszamy do dołączenia do jednej z organizacji studenkich w celu rozwinięcia swoich pasji oraz poznania osób z podobnymi zainteresowaniami.",
-    "typ": "zycie_studenckie_organizacje"
-  },
-  {
     "pytanie": "Jakie koła naukowe, kluby lub organizacje studenckie działają na Wydziale Włókiennictwa i Wzornictwa?",
     "odpowiedz": "Na Wydziale Włókiennictwa i Wzornictwa działają następujące organizacje studenckie: Studenckie Koło Naukowe Designer; Studenckie Koło Naukowe Włókno; Studenckie Koło Naukowe „ECOresearch”. Więcej informacji możesz dowiedzieć się po wejściu na stronę: https://p.lodz.pl/studenci/kola-naukowe-i-organizacje-studenckie. Serdecznie zapraszamy do dołączenia do jednej z organizacji studenkich w celu rozwinięcia swoich pasji oraz poznania osób z podobnymi zainteresowaniami.",
     "typ": "zycie_studenckie_organizacje"
@@ -3350,7 +3345,7 @@
     "typ": "zycie_studenckie_organizacje"
   },
   {
-    "pytanie": "Jak mogę dowiedzieć się więcej o działaności tych grup?",
+    "pytanie": "Jak mogę dowiedzieć się więcej o działaności tych grup/kół naukowych?",
     "odpowiedz": "W celu dowiedzenia się czegoś więcej o kołach naukowych i organizacjach studenckich należy skontaktować się z jednym z przedstawicieli koła naukowego/organizacji lub wejść na stronę https://p.lodz.pl/studenci/kola-naukowe-i-organizacje-studenckie.",
     "typ": "zycie_studenckie_organizacje"
   },
@@ -3523,6 +3518,21 @@
     "pytanie": "Ile wynosi stypendium na Politechnice Łódzkiej?",
     "odpowiedz": "Informacje o kwotach stypedniów można znaleźć na stronie: https://p.lodz.pl/studenci/wsparcie/stypendia/regulamin-swiadczen-dla-studentow-od-rak-202526-0",
     "typ": "zycie_studenckie_socjalne"
+  },
+  {
+    "pytanie": "Gdzie można znaleźć więcej szczegółów?",
+    "odpowiedz":"Więcej szczegółów możesz znaleźć na oficjalnej stronie Politechniki Łódzkiej lub kontaktując się bezpośrednio z dziekanatem uczelni.",
+    "typ": "ogolne"
+  },
+  {
+    "pytanie": "Chciałbym pomocy w innym temacie.",
+    "odpowiedz": "Powiedz na jaki temat chciałbyś poznać informacje, a ja zrobię wszystko, co w mojej możliwości, aby ci pomóc.",
+    "typ": "ogolne"
+  },
+  {
+    "pytanie": "Jakie inne informacje są istotne dla studentów?",
+    "odpowiedz": "Oprócz podstawowych informacji o Politechnice Łódzkiej, warto zapoznać się z systemem stypedialnym uczelni, ofertą akademików, czy kołami naukowymi. Służę pomocą, daj znać o czym chcesz usłyszeć.",
+    "typ": "ogolne"
   }
 ]
 
