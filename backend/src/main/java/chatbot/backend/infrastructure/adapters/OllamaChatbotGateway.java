@@ -134,7 +134,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
             String json = objectMapper.writeValueAsString(
                     templateCategory.getTemplates()
                             .stream()
-                            .limit(5)
+                            .limit(8)
                             .toList()
             );
             return Flux.just(json);

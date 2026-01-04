@@ -140,7 +140,6 @@ public enum TemplatesFollowup {
             "Kto jest aktualnie rektorem Politechniki Łódzkiej?"
     )),
     infrastruktura_it(List.of(
-            "Czy chcesz dowiedzieć się więcej na ten temat?",
             "Jakie inne informacje są istotne dla studentów?",
             "Gdzie można znaleźć więcej szczegółów?",
             "Czym jest wikamp?",
@@ -148,7 +147,6 @@ public enum TemplatesFollowup {
             "Gdzie można sprawdzić oceny końcowe?"
     )),
     kierunki_organizacja(List.of(
-            "Czy chcesz dowiedzieć się więcej na ten temat?",
             "Jakie inne informacje są istotne dla studentów?",
             "Gdzie można znaleźć więcej szczegółów?",
             "Jak zapisać się na zajęcia na Politechnice Łódzkiej?",
@@ -165,7 +163,6 @@ public enum TemplatesFollowup {
             "Jakie są perspektywy po ukończeniu kierunku"
     )),
     studia_kierunki(List.of(
-            "Czy chcesz dowiedzieć się więcej na ten temat?",
             "Jakie inne informacje są istotne dla studentów?",
             "Gdzie można znaleźć więcej szczegółów?",
             "Czy masz pytania dotyczące studiów?",
@@ -174,7 +171,6 @@ public enum TemplatesFollowup {
             "Jakie są perspektywy po ukończeniu kierunku"
     )),
     zycie_studenckie_organizacje(List.of(
-            "Czy chcesz dowiedzieć się więcej na ten temat?",
             "Jakie inne informacje są istotne dla studentów?",
             "Jakie korzyści płyną z uczestnictwa w życiu studenckim na Politechnice Łódzkiej",
             "Gdzie można znaleźć więcej szczegółów?",
