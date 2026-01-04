@@ -29,7 +29,7 @@ public class Conversation {
 
     public void sendMessage(Message message){
         if (endedAt != null) {
-            throw new IllegalStateException("Conversation is already ended.");
+            throw new IllegalStateException("Conversation has already ended.");
         }
         this.messages.add(message);
     }
