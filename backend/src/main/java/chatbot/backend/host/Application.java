@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
         "chatbot.backend.infrastructure",
         "chatbot.backend.host"
 })
-@EnableMongoRepositories(basePackages = "chatbot.backend.domain.repositories")
+@EnableMongoRepositories(basePackages = "chatbot.backend.infrastructure.repositories")
 public class Application {
 
     public static void main(String[] args) {

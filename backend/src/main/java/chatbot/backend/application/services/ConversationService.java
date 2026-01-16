@@ -1,18 +1,16 @@
 package chatbot.backend.application.services;
 
+import chatbot.backend.application.chat.*;
 import chatbot.backend.application.common.interfaces.RerankerGateway;
+import chatbot.backend.application.common.interfaces.VectorDatabaseSearchGateway;
+import chatbot.backend.application.knowledge.VectorDatabaseDocument;
 import chatbot.backend.domain.entities.*;
 import chatbot.backend.domain.enums.FollowupMethod;
 import chatbot.backend.domain.enums.Sender;
-import chatbot.backend.domain.repositories.IConversationRepository;
+import chatbot.backend.domain.repositories.ConversationRepository;
 import chatbot.backend.application.common.interfaces.ChatbotGateway;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -24,17 +22,19 @@ import java.util.stream.Collectors;
 
 @Service
 public class ConversationService {
-    private final IConversationRepository conversationRepository;
+    private final ConversationRepository conversationRepository;
     private final ChatbotGateway chatbotGateway;
-    private final VectorStore vectorStore;
     private final RerankerGateway rerankerGateway;
+    private final ObjectMapper objectMapper;
+    private final VectorDatabaseSearchGateway vectorDatabaseSearchGateway;
 
     @Autowired
-    public ConversationService(IConversationRepository conversationRepository,  ChatbotGateway chatbotGateway,  VectorStore vectorStore, RerankerGateway rerankerGateway) {
+    public ConversationService(ConversationRepository conversationRepository, ChatbotGateway chatbotGateway, RerankerGateway rerankerGateway, ObjectMapper objectMapper, VectorDatabaseSearchGateway vectorDatabaseSearchGateway) {
         this.conversationRepository = conversationRepository;
         this.chatbotGateway = chatbotGateway;
-        this.vectorStore = vectorStore;
         this.rerankerGateway = rerankerGateway;
+        this.objectMapper = objectMapper;
+        this.vectorDatabaseSearchGateway = vectorDatabaseSearchGateway;
     }
 
     public Conversation startConversation(){
@@ -54,43 +54,23 @@ public class ConversationService {
         return conversationRepository.findById(conversationId).orElse(null);
     }
 
-    public Flux<String> streamBotResponse(String conversationId, String content) {
-        Message userMessage = MessageFactory.createUserMessage(content);
+    public Flux<ChatEvent> streamBotResponse(String conversationId, String query) {
+        Message userMessage = MessageFactory.createUserMessage(query);
         userMessage.setConversationId(conversationId);
         sendMessage(conversationId, userMessage);
 
         Conversation conversation = getConversationById(conversationId);
 
-        String rewriteContext = conversation.getMessages().stream()
-                .skip(Math.max(0, conversation.getMessages().size() - 4))
-                .map(m -> m.getSender() == Sender.BOT
-                        ? "BOT: " + m.getContent()
-                        : "UŻYTKOWNIK: " + m.getContent())
-                .collect(Collectors.joining("\n"));
+        List<Message> lastMessages = conversation.getLastMessages(4);
 
-        String fixedContent = chatbotGateway.rewrite(content, rewriteContext);
+        String fixedContent = chatbotGateway.rewrite(query, lastMessages);
 
-        List<Document> similarDocs = findPESimilarDocuments(fixedContent);
+        List<VectorDatabaseDocument> similarDocs = vectorDatabaseSearchGateway.findSimilarDocuments(fixedContent, 5);
 
-        List<Document> reranked = rerankerGateway.rerank(fixedContent, similarDocs);
-        List<Document> limitReranked = reranked.stream().limit(5).toList();
+        List<VectorDatabaseDocument> reranked = rerankerGateway.rerank(fixedContent, similarDocs);
+        List<VectorDatabaseDocument> faqsContext = reranked.stream().limit(5).toList();
 
-        String faqsContext = limitReranked.isEmpty() ? "Brak dostępnych informacji w bazie wiedzy." : limitReranked.stream()
-                .map(d ->
-                    """
-                    [INFORMACJA]
-                    %s
-                    """.formatted(d.getText()))
-                .collect(Collectors.joining("\n"));
-
-        String shortHistory = conversation.getMessages().stream()
-                .skip(Math.max(0, conversation.getMessages().size() - 4))
-                .map(m -> m.getSender() == Sender.BOT
-                        ? "BOT: " + m.getContent()
-                        : "UŻYTKOWNIK: " + m.getContent())
-                .collect(Collectors.joining("\n"));
-
-        Prompt prompt = getPrompt(fixedContent, faqsContext, shortHistory);
+        PromptMessage prompt = new PromptMessage(fixedContent, lastMessages ,faqsContext);
 
         StringBuilder responseBuilder = new StringBuilder();
         StringBuilder buffer = new StringBuilder();
@@ -104,20 +84,20 @@ public class ConversationService {
                         buffer.setLength(0);
                         responseBuilder.append(toSend);
 
-                        return Flux.just("data: " + toSend + "\n\n");
+                        return Flux.<ChatEvent>just(new BotMessageChunk(toSend));
                     }
 
                     return Flux.empty();
                 })
                 .concatWith(Flux.defer(() -> {
-                    Flux<String> finalText = Flux.empty();
+                    Flux<ChatEvent> finalText = Flux.empty();
 
                     if (!buffer.isEmpty()) {
                         String remainingData = buffer.toString();
                         buffer.setLength(0);
                         responseBuilder.append(remainingData);
 
-                        finalText = Flux.just("data: " + remainingData + "\n\n");
+                        finalText = Flux.just(new BotMessageChunk(remainingData));
                     }
 
                     Message botMessage = MessageFactory.createBotMessage(responseBuilder.toString());
@@ -126,66 +106,42 @@ public class ConversationService {
 
                     String answer = responseBuilder.toString();
 
-                    List<String> similarQuestions = limitReranked.stream()
-                            .map(doc -> doc.getMetadata().get("pytanie").toString())
+                    List<String> similarQuestions = faqsContext.stream()
+                            .map(VectorDatabaseDocument::question)
                             .toList();
 
-                    String category = limitReranked.stream()
-                            .map(doc -> doc.getMetadata().get("typ").toString())
+                    String category = faqsContext.stream()
+                            .map(VectorDatabaseDocument::category)
                             .collect(Collectors.groupingBy(typ -> typ, Collectors.counting()))
                                     .entrySet().stream()
                                     .max(Map.Entry.comparingByValue())
                                     .map(Map.Entry::getKey)
                                     .orElse("ogolne");
 
-                    Flux<String> followups = generateFollowups(FollowupMethod.TEMPLATE_BASED, answer, similarQuestions, category)
-                            .map(followupsJson -> "data: {\"type\":\"followups\",\"options\":" + followupsJson + "}\n\n")
-                            .onErrorReturn("data: {\"type\":\"followups\",\"options\":[]}\n\n");
+                    Flux<ChatEvent> followups = generateFollowups(FollowupMethod.RAG_SIMILAR_QUESTIONS, answer, similarQuestions, category)
+                            .map(this::parseFollowupsJson)
+                            .map(list -> (ChatEvent) new FollowupsEvent(list))
+                            .onErrorReturn(new FollowupsEvent(List.of()));
 
                     return Flux.concat(finalText, followups);
-                })
+                }))
                 .publishOn(Schedulers.boundedElastic())
                 .doFinally(_ -> conversationRepository.save(conversation))
-                .onErrorResume(err -> Flux.just("ERROR: " + err.getMessage())));
+                .onErrorResume(err -> Flux.just(new ErrorEvent(err.getMessage())));
     }
 
-    private static @NonNull Prompt getPrompt(String content, String faqsContext, String shortHistory) {
-        String systemPrompt =
-                """
-                Jesteś Tulbotem, chatbotem odpowiadającym wyłącznie na pytania o Politechnice Łódzkiej.
-                
-                Ścisłe reguły:
-                 - Odpowiadaj WYŁĄCZNIE na podstawie przekazanego kontekstu.
-                 - NIE korzystaj z wiedzy spoza kontekstu i niczego nie dopowiadaj.
-                 - Odpowiedzi formułuj grzecznie i konkretnie.
-                 - NIE cytuj pytania użytkownika.
-                 - Jeżeli w kontekście nie ma żadnych dokumentów, które odpowiadają na pytanie, odpisz że nie jesteś w stanie odpowiedzieć na to pytanie, nawet jeśli jest ono bardzo proste.
-                 - Jeżeli pytanie NIE dotyczy Politechniki Łódzkiej, poinformuj o tym uprzejmie i w sposób zrozumiały.
-                 - ZAWSZE pozostawaj w roli Tulbota.
-                """;
-
-        String userPrompt =
-            """
-            [KONTEKST - JEDYNE ŹRÓDŁO WIEDZY]
-            %s
-            
-            [KONTEKST DIALOGOWY - NIE JEST ŹRÓDŁEM WIEDZY]
-            %s
-            
-            [AKTUALNE PYTANIE UŻYTKOWNIKA]
-            %s
-            """.formatted(faqsContext, shortHistory, content);
-
-        return new Prompt(List.of(
-                new SystemMessage(systemPrompt),
-                new UserMessage(userPrompt)
-        ));
+    private List<String> parseFollowupsJson(String json) {
+        try {
+            return objectMapper.readValue(json, new TypeReference<>() {});
+        } catch (Exception e) {
+            return List.of();
+        }
     }
 
-    public Flux<String> startAndStreamBotResponse(String userContent) {
+    public Flux<ChatEvent> startAndStreamBotResponse(String userContent) {
         Conversation conversation = startConversation();
-        String id = "data: {\"type\":\"conversationId\",\"id\":\"" + conversation.getId() + "\"}\n\n";
-        return Flux.concat(Flux.just(id), streamBotResponse(conversation.getId(), userContent));
+        ChatEvent convId = new ConversationStart(conversation.getId());
+        return Flux.concat(Flux.just(convId), streamBotResponse(conversation.getId(), userContent));
     }
 
     public Flux<String> generateFollowups(
@@ -200,15 +156,4 @@ public class ConversationService {
             case TEMPLATE_BASED -> chatbotGateway.followupsWithTemplates(category);
         };
     }
-
-    private List<Document> findPESimilarDocuments(String query) {
-        return vectorStore.similaritySearch(
-                SearchRequest.builder()
-                        .query(query)
-                        .topK(30)
-                        .similarityThreshold(0.5)
-                        .build()
-        );
-    }
-
 }

@@ -47,14 +47,6 @@ public enum TemplatesFollowup {
             "Gdzie znajduje się wydział?",
             "Kto jest aktualnie rektorem Politechniki Łódzkiej"
     )),
-    zycie_studenckie_organizacja(List.of(
-            "Jak wygląda organizacja roku akademickiego?",
-            "Czy na Politechnice Łódzkiej istnieją koła naukowe, kluby lub organizacje studenckie, w których można rozwijać swoje pasje?",
-            "Jakie koła naukowe lub organizacje studenckie mają charakter międzywydziałowy na Politechnice Łódzkiej?",
-            "Jak mogę dowiedzieć się więcej o działaności tych grup?",
-            "Ile studentów uczęszcza/jest na Politechnice Łódzkiej",
-            "Czy Politechnika Łódzka ma akademiki dla studentów?"
-    )),
     zycie_studenckie_socjalne(List.of(
             "Jakie jest wyposażenie akademików na Politechnice Łódzkiej?",
             "Czy Politechnika Łódzka ma akademiki dla studentów?",

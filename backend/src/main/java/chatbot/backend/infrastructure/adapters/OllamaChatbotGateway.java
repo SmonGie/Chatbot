@@ -1,6 +1,10 @@
 package chatbot.backend.infrastructure.adapters;
 
+import chatbot.backend.application.chat.PromptMessage;
 import chatbot.backend.application.common.interfaces.ChatbotGateway;
+import chatbot.backend.application.knowledge.VectorDatabaseDocument;
+import chatbot.backend.domain.entities.Message;
+import chatbot.backend.domain.enums.Sender;
 import chatbot.backend.domain.enums.TemplatesFollowup;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jspecify.annotations.NonNull;
@@ -28,13 +32,16 @@ public class OllamaChatbotGateway implements ChatbotGateway {
     }
 
     @Override
-    public Flux<String> response(Prompt prompt) {
+    public Flux<String> response(PromptMessage promptTemp) {
+        Prompt prompt = buildPrompt(promptTemp);
         return chatModel.stream(prompt)
                 .mapNotNull(response -> response.getResult().getOutput().getText());
     }
 
     @Override
-    public String rewrite(String query, String context) {
+    public String rewrite(String query, List<Message> history) {
+        String context = formatHistory(history);
+
         Prompt prompt = new Prompt(List.of(
                 new SystemMessage(
                         """
@@ -160,4 +167,63 @@ public class OllamaChatbotGateway implements ChatbotGateway {
                 .flux()
                 .onErrorReturn("[]");
     }
+
+    private Prompt buildPrompt(PromptMessage promptTemp) {
+        String systemPrompt =
+                """
+                Jesteś Tulbotem, chatbotem odpowiadającym wyłącznie na pytania o Politechnice Łódzkiej.
+        
+                Ścisłe reguły:
+                 - Odpowiadaj WYŁĄCZNIE na podstawie przekazanego kontekstu.
+                 - NIE korzystaj z wiedzy spoza kontekstu i niczego nie dopowiadaj.
+                 - Odpowiedzi formułuj grzecznie i konkretnie.
+                 - NIE cytuj pytania użytkownika.
+                 - Jeżeli w kontekście nie ma żadnych dokumentów, które odpowiadają na pytanie, odpisz że nie jesteś w stanie odpowiedzieć na to pytanie, nawet jeśli jest ono bardzo proste.
+                 - Jeżeli pytanie NIE dotyczy Politechniki Łódzkiej, poinformuj o tym uprzejmie i w sposób zrozumiały.
+                 - ZAWSZE pozostawaj w roli Tulbota.
+                """;
+
+        String knowledge = formatKnowledge(promptTemp.knowledgeContext());
+        String history   = formatHistory(promptTemp.history());
+
+        String userPrompt =
+                """
+                [KONTEKST - JEDYNE ŹRÓDŁO WIEDZY]
+                %s
+        
+                [KONTEKST DIALOGOWY - NIE JEST ŹRÓDŁEM WIEDZY]
+                %s
+        
+                [AKTUALNE PYTANIE UŻYTKOWNIKA]
+                %s
+                """.formatted(
+                        knowledge,
+                        history,
+                        promptTemp.question()
+                );
+
+        return new Prompt(List.of(
+                new SystemMessage(systemPrompt),
+                new UserMessage(userPrompt)
+        ));
+    }
+
+    private String formatKnowledge(List<VectorDatabaseDocument> docs) {
+        if (docs.isEmpty()) {
+            return "Brak dostępnych informacji w bazie wiedzy.";
+        }
+
+        return docs.stream()
+                .map(document -> "[INFORMACJA]\n" + document.text())
+                .collect(Collectors.joining("\n"));
+    }
+
+    private String formatHistory(List<Message> messages) {
+        return messages.stream()
+                .map(m -> m.getSender() == Sender.BOT
+                        ? "BOT: " + m.getContent()
+                        : "UŻYTKOWNIK: " + m.getContent())
+                .collect(Collectors.joining("\n"));
+    }
+
 }

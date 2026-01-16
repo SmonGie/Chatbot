@@ -1,7 +1,7 @@
 package chatbot.backend.infrastructure.adapters;
 
 import chatbot.backend.application.common.interfaces.RerankerGateway;
-import org.springframework.ai.document.Document;
+import chatbot.backend.application.knowledge.VectorDatabaseDocument;
 import dev.langchain4j.model.scoring.onnx.OnnxScoringModel;
 import org.springframework.stereotype.Component;
 
@@ -20,15 +20,18 @@ public class OnnxRerankerGateway implements RerankerGateway {
     }
 
     @Override
-    public List<Document> rerank(String query, List<Document> documents) {
+    public List<VectorDatabaseDocument> rerank(String query, List<VectorDatabaseDocument> documentsTemp) {
 
-        if (documents.isEmpty()) {
-            return documents;
+        if (documentsTemp.isEmpty()) {
+            return documentsTemp;
         }
 
-        return documents.stream()
-                .map(doc -> Map.entry(doc, reranker.score(query,  doc.getMetadata().get("pytanie").toString()).content()))
-                .sorted((docA, docB) -> Double.compare(docB.getValue(), docA.getValue()))
+        return documentsTemp.stream()
+                .map(doc -> Map.entry(
+                        doc,
+                        reranker.score(query, doc.question()).content()
+                ))
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
                 .map(Map.Entry::getKey)
                 .toList();
     }

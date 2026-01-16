@@ -1,9 +1,10 @@
 package chatbot.backend.application.common.interfaces;
 
+import chatbot.backend.application.knowledge.VectorDatabaseDocument;
 import org.springframework.ai.document.Document;
 
 import java.util.List;
 
 public interface RerankerGateway {
-    List<Document> rerank(String query, List<Document> documents);
+    List<VectorDatabaseDocument> rerank(String query, List<VectorDatabaseDocument> documentsTemp);
 }

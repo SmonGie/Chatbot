@@ -27,6 +27,11 @@ public class Conversation {
         messages = new ArrayList<>();
     }
 
+    public List<Message> getLastMessages(int amount) {
+        int size = messages.size();
+        return messages.subList(Math.max(0, size - amount), size);
+    }
+
     public void sendMessage(Message message){
         if (endedAt != null) {
             throw new IllegalStateException("Conversation has already ended.");
