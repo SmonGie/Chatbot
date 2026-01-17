@@ -2,7 +2,6 @@ package chatbot.backend.application.common.interfaces;
 
 import chatbot.backend.application.chat.PromptMessage;
 import chatbot.backend.domain.entities.Message;
-import org.springframework.ai.chat.prompt.Prompt;
 import reactor.core.publisher.Flux;
 
 import java.util.List;

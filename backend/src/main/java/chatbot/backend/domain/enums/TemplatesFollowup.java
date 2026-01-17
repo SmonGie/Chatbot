@@ -157,7 +157,6 @@ public enum TemplatesFollowup {
     studia_kierunki(List.of(
             "Jakie inne informacje są istotne dla studentów?",
             "Gdzie można znaleźć więcej szczegółów?",
-            "Czy masz pytania dotyczące studiów?",
             "Chciałbym pomocy w innym temacie.",
             "Jakie są podstawowe informacje organizacyjne o kierunku",
             "Jakie są perspektywy po ukończeniu kierunku"

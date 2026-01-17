@@ -79,11 +79,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
                     """.formatted(context, query))
         ));
 
-        return Objects.requireNonNull(chatModel.call(prompt)
-                        .getResult()
-                        .getOutput()
-                        .getText())
-                .trim();
+        return Objects.requireNonNull(chatModel.call(prompt).getResult().getOutput().getText()).trim();
     }
 
     @Override
@@ -196,11 +192,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
         
                 [AKTUALNE PYTANIE UŻYTKOWNIKA]
                 %s
-                """.formatted(
-                        knowledge,
-                        history,
-                        promptTemp.question()
-                );
+                """.formatted(knowledge, history, promptTemp.question());
 
         return new Prompt(List.of(
                 new SystemMessage(systemPrompt),

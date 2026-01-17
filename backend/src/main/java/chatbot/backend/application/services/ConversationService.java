@@ -54,7 +54,8 @@ public class ConversationService {
         return conversationRepository.findById(conversationId).orElse(null);
     }
 
-    public Flux<ChatEvent> streamBotResponse(String conversationId, String query) {
+    public Flux<ChatEvent> streamBotResponse(String conversationId, String query, FollowupMethod method) {
+        System.out.println(method);
         Message userMessage = MessageFactory.createUserMessage(query);
         userMessage.setConversationId(conversationId);
         sendMessage(conversationId, userMessage);
@@ -62,14 +63,14 @@ public class ConversationService {
         Conversation conversation = getConversationById(conversationId);
 
         List<Message> lastMessages = conversation.getLastMessages(4);
-
+        System.out.println(lastMessages.toString() + "\n" + "\n");
         String fixedContent = chatbotGateway.rewrite(query, lastMessages);
 
         List<VectorDatabaseDocument> similarDocs = vectorDatabaseSearchGateway.findSimilarDocuments(fixedContent, 5);
-
+        System.out.println(similarDocs + "\n" + "\n");
         List<VectorDatabaseDocument> reranked = rerankerGateway.rerank(fixedContent, similarDocs);
         List<VectorDatabaseDocument> faqsContext = reranked.stream().limit(5).toList();
-
+        System.out.println(faqsContext + "\n" + "\n");
         PromptMessage prompt = new PromptMessage(fixedContent, lastMessages ,faqsContext);
 
         StringBuilder responseBuilder = new StringBuilder();
@@ -118,7 +119,7 @@ public class ConversationService {
                                     .map(Map.Entry::getKey)
                                     .orElse("ogolne");
 
-                    Flux<ChatEvent> followups = generateFollowups(FollowupMethod.RAG_SIMILAR_QUESTIONS, answer, similarQuestions, category)
+                    Flux<ChatEvent> followups = generateFollowups(method, answer, similarQuestions, category)
                             .map(this::parseFollowupsJson)
                             .map(list -> (ChatEvent) new FollowupsEvent(list))
                             .onErrorReturn(new FollowupsEvent(List.of()));
@@ -138,10 +139,10 @@ public class ConversationService {
         }
     }
 
-    public Flux<ChatEvent> startAndStreamBotResponse(String userContent) {
+    public Flux<ChatEvent> startAndStreamBotResponse(String userContent, FollowupMethod method) {
         Conversation conversation = startConversation();
         ChatEvent convId = new ConversationStart(conversation.getId());
-        return Flux.concat(Flux.just(convId), streamBotResponse(conversation.getId(), userContent));
+        return Flux.concat(Flux.just(convId), streamBotResponse(conversation.getId(), userContent, method));
     }
 
     public Flux<String> generateFollowups(
@@ -152,7 +153,7 @@ public class ConversationService {
     {
         return switch (method) {
             case PROMPT_ENGINEERING -> chatbotGateway.followupsWithPromptEngineering(answer);
-            case RAG_SIMILAR_QUESTIONS -> chatbotGateway.followupsWithRAG(similarQuestions);
+            case RAG -> chatbotGateway.followupsWithRAG(similarQuestions);
             case TEMPLATE_BASED -> chatbotGateway.followupsWithTemplates(category);
         };
     }

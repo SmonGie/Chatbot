@@ -2,6 +2,7 @@ package chatbot.backend.host.controllers;
 
 import chatbot.backend.application.chat.*;
 import chatbot.backend.application.services.ConversationService;
+import chatbot.backend.domain.enums.FollowupMethod;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,10 @@ public class ConversationController {
 
     @GetMapping(value = "/ask", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> ask(@RequestParam String content,
-                            @RequestParam(required = false) String conversationId) {
+                            @RequestParam(required = false) String conversationId,
+                            @RequestParam(required = false, defaultValue = "RAG") FollowupMethod method) {
 
-        Flux<ChatEvent> events = (conversationId == null || conversationId.isEmpty()) ? conversationService.startAndStreamBotResponse(content) : conversationService.streamBotResponse(conversationId, content);
+        Flux<ChatEvent> events = (conversationId == null || conversationId.isEmpty()) ? conversationService.startAndStreamBotResponse(content, method) : conversationService.streamBotResponse(conversationId, content, method);
 
         return events.map(event -> switch (event) {
             case BotMessageChunk chunk -> "data: " + chunk.text() + "\n\n";

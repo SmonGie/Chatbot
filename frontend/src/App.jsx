@@ -5,10 +5,21 @@ import DOMPurify from "dompurify";
 
 function Header() {
     return (
-        <header>
+        <header className="flex flex-col items-center">
             <h2 className="mt-5 mb-5 font-bold text-4xl text-center text-[#ffffff]">
                 Chatbot politechniki łódzkiej
             </h2>
+            <div className="mb-5 flex items-center gap-4">
+                <h3 className="text-[#ffffff]">Wybierz sposób generowania pytań follow-up:</h3>
+                <select
+                    id="followupMethod"
+                    className="px-4 py-2 rounded-lg bg-gray-200 text-black"
+                >
+                    <option value="RAG">RAG (Retrieval-Augmented Generation)</option>
+                    <option value="PROMPT_ENGINEERING">Prompt-engineering</option>
+                    <option value="TEMPLATE_BASED">Szablonowe</option>
+                </select>
+            </div>
         </header>
     )
 }
@@ -102,9 +113,10 @@ function App() {
         setMessages((prev) => [...prev, { sender: "USER", content: text }]);
         setFollowups([]);
         setInput("");
+        const method = document.getElementById("followupMethod").value;
 
         const eventSource = new EventSource(
-            `http://localhost:8080/api/conversation/ask?content=${encodeURIComponent(text)}&conversationId=${conversationId || ""}`
+            `http://localhost:8080/api/conversation/ask?content=${encodeURIComponent(text)}&conversationId=${conversationId || ""}&method=${method}`
         );
 
         eventSource.onmessage = (event) => {
@@ -189,9 +201,9 @@ function App() {
 function TypingIndicator() {
     return (
         <div className="flex space-x-1 ml-2">
-            <span className="w-3 h-3 bg-white rounded-full animate-bounce delay-0"></span>
-            <span className="w-3 h-3 bg-white rounded-full animate-bounce delay-300"></span>
-            <span className="w-3 h-3 bg-white rounded-full animate-bounce delay-600"></span>
+            <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-0"></span>
+            <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-150"></span>
+            <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-300"></span>
         </div>
     )
 }
