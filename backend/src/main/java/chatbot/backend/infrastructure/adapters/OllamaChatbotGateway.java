@@ -84,6 +84,8 @@ public class OllamaChatbotGateway implements ChatbotGateway {
 
     @Override
     public Flux<String> followupsWithPromptEngineering(String answer, List<Message> history) {
+        String messageHistory = formatHistory(history);
+
         String instruction =
             """
             Na podstawie poniższej odpowiedzi i kontekstu dialogowego wygeneruj maksymalnie 7 nowych pytań follow-up, bez pomijania kluczowych słów, które student Politechniki Łódzkiej mógłby zadać jako następne.
@@ -101,7 +103,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
            
             Zwróć tylko listę pytań w formacie JSON
             (np. ["pytanie 1", "pytanie 2"]), bez dodatkowego tekstu.
-           """.formatted(formatHistory(history), answer);
+           """.formatted(messageHistory, answer);
 
         return generateResponse(instruction);
     }
@@ -111,6 +113,8 @@ public class OllamaChatbotGateway implements ChatbotGateway {
         String joinedQuestions = similarQuestions.stream()
                 .map(q -> "- " + q)
                 .collect(Collectors.joining("\n"));
+
+        String messageHistory = formatHistory(history);
 
         String instruction =
                 """
@@ -129,7 +133,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
     
                 Zwróć tylko listę pytań w formacie JSON
                 (np. ["pytanie 1", "pytanie 2"]), bez dodatkowego tekstu.
-                """.formatted(formatHistory(history), joinedQuestions);
+                """.formatted(messageHistory, joinedQuestions);
 
         return generateResponse(instruction);
     }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,8 +62,7 @@ public class ConversationService {
 
         Conversation conversation = getConversationById(conversationId);
 
-        List<Message> lastMessages = conversation.getLastMessages(4);
-        System.out.println(lastMessages.toString() + "\n" + "\n");
+        List<Message> lastMessages = new ArrayList<>(conversation.getLastMessages(4));
         String fixedContent = chatbotGateway.rewrite(query, lastMessages);
 
         List<VectorDatabaseDocument> similarDocs = vectorDatabaseSearchGateway.findSimilarDocuments(fixedContent, 5);
