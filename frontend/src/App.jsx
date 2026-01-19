@@ -17,7 +17,7 @@ function Header() {
                 >
                     <option value="RAG">RAG (Retrieval-Augmented Generation)</option>
                     <option value="PROMPT_ENGINEERING">Prompt-engineering</option>
-                    <option value="TEMPLATE_BASED">Szablonowe</option>
+                    <option value="TEMPLATE_BASED">Metoda szablonowa</option>
                 </select>
             </div>
         </header>

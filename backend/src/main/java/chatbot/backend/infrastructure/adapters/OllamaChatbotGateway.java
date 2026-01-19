@@ -83,47 +83,53 @@ public class OllamaChatbotGateway implements ChatbotGateway {
     }
 
     @Override
-    public Flux<String> followupsWithPromptEngineering(String answer) {
+    public Flux<String> followupsWithPromptEngineering(String answer, List<Message> history) {
         String instruction =
             """
-            Na podstawie poniższej odpowiedzi wygeneruj maksymalnie 7 nowych pytań follow-up, bez pomijania kluczowych słów, które student Politechniki Łódzkiej mógłby zadać jako następne.
+            Na podstawie poniższej odpowiedzi i kontekstu dialogowego wygeneruj maksymalnie 7 nowych pytań follow-up, bez pomijania kluczowych słów, które student Politechniki Łódzkiej mógłby zadać jako następne.
            
             Reguły:
-                - Trzymaj się tematu rozmowy.
+                - Pytania mają rozwijać temat rozmowy.
                 - Pytania muszą dotyczyć Politechniki Łódzkiej.
-                - Logicznie rozwijaj temat rozmowy.
+                - Nie powtarzaj podanych pytań, ale logicznie je rozwijaj.
+            
+            Kontekst dialogowy:
+            %s
 
             Odpowiedź:
             %s
            
             Zwróć tylko listę pytań w formacie JSON
             (np. ["pytanie 1", "pytanie 2"]), bez dodatkowego tekstu.
-           """.formatted(answer);
+           """.formatted(formatHistory(history), answer);
 
         return generateResponse(instruction);
     }
 
     @Override
-    public Flux<String> followupsWithRAG(List<String> similarQuestions) {
+    public Flux<String> followupsWithRAG(List<String> similarQuestions, List<Message> history) {
         String joinedQuestions = similarQuestions.stream()
                 .map(q -> "- " + q)
                 .collect(Collectors.joining("\n"));
 
         String instruction =
                 """
-                Na podstawie poniższych pytań wygeneruj maksymalnie 7 nowych pytań follow-up.
+                Na podstawie poniższych pytań i kontekstu dialogowego wygeneruj maksymalnie 7 nowych pytań follow-up.
                 
                 Reguły:
                     - Pytania mają rozwijać temat rozmowy.
-                    - Pytania dotyczą Politechniki Łódzkiej.
+                    - Pytania muszą dotyczyć Politechniki Łódzkiej.
                     - Nie powtarzaj podanych pytań, ale logicznie je rozwijaj.
+                
+                Kontekst dialogowy:
+                %s
                 
                 Podobne pytania:
                 %s
     
                 Zwróć tylko listę pytań w formacie JSON
                 (np. ["pytanie 1", "pytanie 2"]), bez dodatkowego tekstu.
-                """.formatted(joinedQuestions);
+                """.formatted(formatHistory(history), joinedQuestions);
 
         return generateResponse(instruction);
     }

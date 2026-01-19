@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface ChatbotGateway {
     Flux<String> response(PromptMessage prompt);
-    Flux<String> followupsWithRAG(List<String> answer);
+    Flux<String> followupsWithRAG(List<String> answer, List<Message> history);
     String rewrite(String query, List<Message> context);
-    Flux<String> followupsWithPromptEngineering(String similarQuestions);
+    Flux<String> followupsWithPromptEngineering(String similarQuestions, List<Message> history);
     Flux<String> followupsWithTemplates(String category);
 }

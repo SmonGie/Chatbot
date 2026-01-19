@@ -6,7 +6,6 @@ import chatbot.backend.application.common.interfaces.VectorDatabaseSearchGateway
 import chatbot.backend.application.knowledge.VectorDatabaseDocument;
 import chatbot.backend.domain.entities.*;
 import chatbot.backend.domain.enums.FollowupMethod;
-import chatbot.backend.domain.enums.Sender;
 import chatbot.backend.domain.repositories.ConversationRepository;
 import chatbot.backend.application.common.interfaces.ChatbotGateway;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -119,7 +118,7 @@ public class ConversationService {
                                     .map(Map.Entry::getKey)
                                     .orElse("ogolne");
 
-                    Flux<ChatEvent> followups = generateFollowups(method, answer, similarQuestions, category)
+                    Flux<ChatEvent> followups = generateFollowups(method, answer, similarQuestions, category, lastMessages)
                             .map(this::parseFollowupsJson)
                             .map(list -> (ChatEvent) new FollowupsEvent(list))
                             .onErrorReturn(new FollowupsEvent(List.of()));
@@ -149,11 +148,12 @@ public class ConversationService {
             FollowupMethod method,
             String answer,
             List<String> similarQuestions,
-            String category)
+            String category,
+            List<Message> history)
     {
         return switch (method) {
-            case PROMPT_ENGINEERING -> chatbotGateway.followupsWithPromptEngineering(answer);
-            case RAG -> chatbotGateway.followupsWithRAG(similarQuestions);
+            case PROMPT_ENGINEERING -> chatbotGateway.followupsWithPromptEngineering(answer, history);
+            case RAG -> chatbotGateway.followupsWithRAG(similarQuestions, history);
             case TEMPLATE_BASED -> chatbotGateway.followupsWithTemplates(category);
         };
     }
