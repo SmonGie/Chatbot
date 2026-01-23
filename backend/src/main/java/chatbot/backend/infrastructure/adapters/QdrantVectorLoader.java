@@ -27,7 +27,7 @@ public class QdrantVectorLoader implements VectorLoaderGateway {
         try (InputStream is = getClass().getResourceAsStream("/faq.json")) {
             List<Map<String, String>> faqs = mapper.readValue(is, new TypeReference<>() {});
             List<Document> documents = faqs.stream()
-                    .map(faq -> new Document( faq.get("pytanie") + "\n" + faq.get("odpowiedz"), Map.of("pytanie", faq.get("pytanie"), "typ", faq.get("typ"))))
+                    .map(faq -> new Document( faq.get("pytanie") + "\n" + faq.get("odpowiedz"), Map.of("pytanie", faq.get("pytanie"), "typ", faq.get("typ"), "level", faq.get("level"))))
                     .toList();
             vectorStore.add(documents);
         } catch (Exception e) {

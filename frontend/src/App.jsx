@@ -7,10 +7,10 @@ function Header() {
     return (
         <header className="flex flex-col items-center">
             <h2 className="mt-5 mb-5 font-bold text-4xl text-center text-[#ffffff]">
-                Chatbot politechniki łódzkiej
+                Chatbot Politechniki Łódzkiej
             </h2>
-            <div className="mb-5 flex items-center gap-4">
-                <h3 className="text-[#ffffff]">Wybierz sposób generowania pytań follow-up:</h3>
+            <div className="mb-5 md:flex items-center gap-4">
+                <h3 className="mb-2 md:mb-0 text-[#ffffff]">Wybierz sposób generowania pytań follow-up:</h3>
                 <select
                     id="followupMethod"
                     className="px-4 py-2 rounded-lg bg-gray-200 text-black"
@@ -24,7 +24,7 @@ function Header() {
     )
 }
 
-function ChatWindow({ messages, followups, onFollowupClick, isTyping }) {
+function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, onSelectDegree}) {
     const endRef = useRef(null)
 
     useEffect(() => {
@@ -34,8 +34,25 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping }) {
         <div className="bg-linear-to-b from-gray-700 to-gray-600 w-5/6 grow rounded-xl shadow-lg p-6 overflow-y-auto relative">
             <ul className="pb-40">
                 <li className="p-3 space-y-5 rounded-lg text-lg max-w-3xl whitespace-normal bg-[#002147] text-[#ffffff] mr-auto mb-6 leading-relaxed">
-                    Jestem Tulbot, chatbot Politechniki Łódzkiej. W czym mogę Ci dzisiaj pomóc?
+                    Jestem Tulbot, chatbot Politechniki Łódzkiej. Wybierz proszę jedną z opcji poniżej, której będą dotyczyć zadawane przez ciebie pytania, a to pomoże mi dostosować moje odpowiedzi do twoich aktualnych potrzeb 😁😁😁
                 </li>
+                {degree === "I" && (
+                    <li className="p-3 space-y-5 rounded-lg text-lg max-w-3xl whitespace-normal bg-[#002147] text-[#ffffff] mr-auto mb-6 leading-relaxed">
+                        Cześć! Mam nadzieję, że Twoja matura poszła dobrze. Cieszę się, że interesujesz się Politechniką Łódzką 💪. Chętnie pomogę Ci w wyborze kierunku i odpowiem na wszystkie pytania dotyczące studiów I stopnia 🎉🍾.
+                    </li>
+                )}
+
+                {degree === "II" && (
+                    <li className="p-3 space-y-5 rounded-lg text-lg max-w-3xl whitespace-normal bg-[#002147] text-[#ffffff] mr-auto mb-6 leading-relaxed">
+                        Witaj! Gratuluję ukończenia studiów inżynierskich. Jeśli myślisz nad kontynuację nauki na Politechnice Łódzkiej, postaram się pomóc Ci wybrać najlepszy kierunek studiów II stopnia i rozwiać wszelkie wątpliwości 🫡🫡🫡.
+                    </li>
+                )}
+
+                {degree === "all" && (
+                    <li className="p-3 space-y-5 rounded-lg text-lg max-w-3xl whitespace-normal bg-[#002147] text-[#ffffff] mr-auto mb-6 leading-relaxed">
+                        Świetnie! Postaram się odpowiadać możliwie uniwersalnie i pomóc Ci w każdej sprawie związanej z Politechniką Łódzką, a mówią mi, że jestem w tym całkiem niezły  😎 😎 😎.
+                    </li>
+                )}
                 {messages.map((msg, index) => (
                     <li
                         key={index}
@@ -71,6 +88,23 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping }) {
                         )}
                     </li>
                 ))}
+                {degree === null && (
+                    <div className="mt-6 flex flex-wrap gap-3 justify-center">
+                        {[
+                            { label: "Studia I stopnia", value: "I" },
+                            { label: "Studia II stopnia", value: "II" },
+                            { label: "Pomiń", value: "all" }
+                        ].map((degreeChoice, i) => (
+                            <button
+                                key={i}
+                                onClick={() => onSelectDegree(degreeChoice.value)}
+                                className="bg-[#ffc107] hover:bg-yellow-400 text-gray-900 px-4 py-2 rounded-lg transition-all hover:scale-103 shadow-md font-semibold text-lg"
+                            >
+                                {degreeChoice.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
                 {followups.length > 0 && (
                     <div className="mt-6 flex flex-wrap gap-3 justify-center">
                         {followups.map((question, i) => (
@@ -96,6 +130,7 @@ function App() {
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [conversationId, setConversationId] = useState(null);
+    const [degree, setDegree] = useState(null);
 
     const handleFollowupClick = (question) => {
         sendMessage(question);
@@ -116,7 +151,7 @@ function App() {
         const method = document.getElementById("followupMethod").value;
 
         const eventSource = new EventSource(
-            `http://localhost:8080/api/conversation/ask?content=${encodeURIComponent(text)}&conversationId=${conversationId || ""}&method=${method}`
+            `http://localhost:8080/api/conversation/ask?content=${encodeURIComponent(text)}&conversationId=${conversationId || ""}&method=${method}&level=${degree}`
         );
 
         eventSource.onmessage = (event) => {
@@ -173,6 +208,8 @@ function App() {
                     followups={followups}
                     onFollowupClick={handleFollowupClick}
                     isTyping={isLoading}
+                    degree={degree}
+                    onSelectDegree={setDegree}
                 />
                 <div className="w-5/6 flex mt-4">
                     <input
@@ -180,14 +217,14 @@ function App() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        disabled={isLoading}
-                        className="grow p-4 text-lg rounded-l-lg border-none outline-none bg-gray-200 text-[#2f2e31] placeholder-[#2f2e31] disabled:opacity-50"
+                        disabled={isLoading || degree === null}
+                        className="grow sm:p-4 p-3  text-lg rounded-l-lg border-none outline-none bg-gray-200 text-[#2f2e31] placeholder-[#2f2e31] disabled:opacity-50"
                         placeholder={isLoading ? "Bot pisze..." : "Wpisz wiadomość..."}
                     />
                     <button
                         onClick={() => sendMessage(input)}
-                        disabled={isLoading || !input.trim()}
-                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white px-6 rounded-r-lg transition-all"
+                        disabled={isLoading || !input.trim() || degree === null}
+                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white sm:px-6 px-3 rounded-r-lg transition-all"
                     >
                         {isLoading ? "..." : "Wyślij"}
                     </button>

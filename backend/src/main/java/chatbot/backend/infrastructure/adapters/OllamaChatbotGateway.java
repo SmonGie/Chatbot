@@ -109,7 +109,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
     }
 
     @Override
-    public Flux<String> followupsWithRAG(List<String> similarQuestions, List<Message> history) {
+    public Flux<String> followupsWithRAG(List<String> similarQuestions, List<Message> history, String answer) {
         String joinedQuestions = similarQuestions.stream()
                 .map(q -> "- " + q)
                 .collect(Collectors.joining("\n"));
@@ -118,7 +118,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
 
         String instruction =
                 """
-                Na podstawie poniższych pytań i kontekstu dialogowego wygeneruj maksymalnie 7 nowych pytań follow-up.
+                Na podstawie poniższych pytań, kontekstu dialogowego i odpowiedzi wygeneruj maksymalnie 7 nowych pytań follow-up.
                 
                 Reguły:
                     - Pytania mają rozwijać temat rozmowy.
@@ -131,9 +131,12 @@ public class OllamaChatbotGateway implements ChatbotGateway {
                 Podobne pytania:
                 %s
     
+                Odpowiedź:
+                %s
+                
                 Zwróć tylko listę pytań w formacie JSON
                 (np. ["pytanie 1", "pytanie 2"]), bez dodatkowego tekstu.
-                """.formatted(messageHistory, joinedQuestions);
+                """.formatted(messageHistory, joinedQuestions, answer);
 
         return generateResponse(instruction);
     }

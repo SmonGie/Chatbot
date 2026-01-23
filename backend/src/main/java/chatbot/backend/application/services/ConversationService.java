@@ -3,6 +3,7 @@ package chatbot.backend.application.services;
 import chatbot.backend.application.chat.*;
 import chatbot.backend.application.common.interfaces.RerankerGateway;
 import chatbot.backend.application.common.interfaces.VectorDatabaseSearchGateway;
+import chatbot.backend.application.enums.Degree;
 import chatbot.backend.application.knowledge.VectorDatabaseDocument;
 import chatbot.backend.domain.entities.*;
 import chatbot.backend.domain.enums.FollowupMethod;
@@ -54,8 +55,7 @@ public class ConversationService {
         return conversationRepository.findById(conversationId).orElse(null);
     }
 
-    public Flux<ChatEvent> streamBotResponse(String conversationId, String query, FollowupMethod method) {
-        System.out.println(method);
+    public Flux<ChatEvent> streamBotResponse(String conversationId, String query, FollowupMethod method, Degree level) {
         Message userMessage = MessageFactory.createUserMessage(query);
         userMessage.setConversationId(conversationId);
         sendMessage(conversationId, userMessage);
@@ -65,11 +65,9 @@ public class ConversationService {
         List<Message> lastMessages = new ArrayList<>(conversation.getLastMessages(4));
         String fixedContent = chatbotGateway.rewrite(query, lastMessages);
 
-        List<VectorDatabaseDocument> similarDocs = vectorDatabaseSearchGateway.findSimilarDocuments(fixedContent, 5);
-        System.out.println(similarDocs + "\n" + "\n");
+        List<VectorDatabaseDocument> similarDocs = vectorDatabaseSearchGateway.findSimilarDocuments(fixedContent, 5, level);
         List<VectorDatabaseDocument> reranked = rerankerGateway.rerank(fixedContent, similarDocs);
         List<VectorDatabaseDocument> faqsContext = reranked.stream().limit(5).toList();
-        System.out.println(faqsContext + "\n" + "\n");
         PromptMessage prompt = new PromptMessage(fixedContent, lastMessages ,faqsContext);
 
         StringBuilder responseBuilder = new StringBuilder();
@@ -138,10 +136,10 @@ public class ConversationService {
         }
     }
 
-    public Flux<ChatEvent> startAndStreamBotResponse(String userContent, FollowupMethod method) {
+    public Flux<ChatEvent> startAndStreamBotResponse(String userContent, FollowupMethod method, Degree level) {
         Conversation conversation = startConversation();
         ChatEvent convId = new ConversationStart(conversation.getId());
-        return Flux.concat(Flux.just(convId), streamBotResponse(conversation.getId(), userContent, method));
+        return Flux.concat(Flux.just(convId), streamBotResponse(conversation.getId(), userContent, method, level));
     }
 
     public Flux<String> generateFollowups(
@@ -153,7 +151,7 @@ public class ConversationService {
     {
         return switch (method) {
             case PROMPT_ENGINEERING -> chatbotGateway.followupsWithPromptEngineering(answer, history);
-            case RAG -> chatbotGateway.followupsWithRAG(similarQuestions, history);
+            case RAG -> chatbotGateway.followupsWithRAG(similarQuestions, history, answer);
             case TEMPLATE_BASED -> chatbotGateway.followupsWithTemplates(category);
         };
     }

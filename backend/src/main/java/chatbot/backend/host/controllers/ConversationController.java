@@ -1,6 +1,7 @@
 package chatbot.backend.host.controllers;
 
 import chatbot.backend.application.chat.*;
+import chatbot.backend.application.enums.Degree;
 import chatbot.backend.application.services.ConversationService;
 import chatbot.backend.domain.enums.FollowupMethod;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,9 +25,10 @@ public class ConversationController {
     @GetMapping(value = "/ask", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> ask(@RequestParam String content,
                             @RequestParam(required = false) String conversationId,
-                            @RequestParam(required = false, defaultValue = "RAG") FollowupMethod method) {
+                            @RequestParam(required = false, defaultValue = "RAG") FollowupMethod method,
+                            @RequestParam(required = false, defaultValue = "all") Degree level) {
 
-        Flux<ChatEvent> events = (conversationId == null || conversationId.isEmpty()) ? conversationService.startAndStreamBotResponse(content, method) : conversationService.streamBotResponse(conversationId, content, method);
+        Flux<ChatEvent> events = (conversationId == null || conversationId.isEmpty()) ? conversationService.startAndStreamBotResponse(content, method, level) : conversationService.streamBotResponse(conversationId, content, method, level);
 
         return events.map(event -> switch (event) {
             case BotMessageChunk chunk -> "data: " + chunk.text() + "\n\n";
