@@ -118,7 +118,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
 
         String instruction =
                 """
-                Na podstawie poniższych pytań, kontekstu dialogowego i odpowiedzi wygeneruj maksymalnie 7 nowych pytań follow-up.
+                Na podstawie poniższych pytań, kontekstu dialogowego i odpowiedzi wygeneruj maksymalnie 7 nowych pytań follow-up, bez pomijania kluczowych słów, które student Politechniki Łódzkiej mógłby zadać jako następne..
                 
                 Reguły:
                     - Pytania mają rozwijać temat rozmowy.

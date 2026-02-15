@@ -19,7 +19,6 @@ public class Conversation {
     private String id;
     private List<Message> messages;
     private Instant createdAt;
-    private Instant endedAt;
 
     Conversation() {
         this.id = UUID.randomUUID().toString();
@@ -33,15 +32,6 @@ public class Conversation {
     }
 
     public void sendMessage(Message message){
-        if (endedAt != null) {
-            throw new IllegalStateException("Conversation has already ended.");
-        }
         this.messages.add(message);
-    }
-
-    public void end() {
-        if (endedAt == null) {
-            this.endedAt = Instant.now();
-        }
     }
 }
