@@ -31,6 +31,31 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
 
+  backend:
+    build:
+      context: ./backend
+    container_name: chatbot-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/chatbot?authSource=admin
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: 6334
+    depends_on:
+      - mongo
+      - qdrant
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: chatbot-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
 volumes:
   mongo-data:
   qdrant_data:

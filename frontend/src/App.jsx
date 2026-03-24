@@ -151,7 +151,7 @@ function App() {
         const method = document.getElementById("followupMethod").value;
 
         const eventSource = new EventSource(
-            `http://localhost:8080/api/conversation/ask?content=${encodeURIComponent(text)}&conversationId=${conversationId || ""}&method=${method}&level=${degree}`
+            `/api/conversation/ask?content=${encodeURIComponent(text)}&conversationId=${conversationId || ""}&method=${method}&level=${degree}`
         );
 
         eventSource.onmessage = (event) => {
