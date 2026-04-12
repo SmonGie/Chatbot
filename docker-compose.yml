@@ -42,6 +42,8 @@ services:
       SPRING_DATA_MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/chatbot?authSource=admin
       QDRANT_HOST: qdrant
       QDRANT_PORT: 6334
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      SERVER_ADDRESS: 0.0.0.0
     depends_on:
       - mongo
       - qdrant

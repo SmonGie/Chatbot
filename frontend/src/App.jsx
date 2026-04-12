@@ -1,7 +1,26 @@
-import { useState, useEffect, useRef } from "react"
-import "./App.css"
+import { useState, useEffect, useRef } from "react";
+import "./App.css";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
+
+function appendBotChunk(setMessages, text) {
+    if (!text) {
+        return;
+    }
+
+    setMessages((prev) => {
+        const last = prev[prev.length - 1];
+
+        if (last && last.sender === "BOT") {
+            return [
+                ...prev.slice(0, -1),
+                { ...last, content: last.content + text }
+            ];
+        }
+
+        return [...prev, { sender: "BOT", content: text }];
+    });
+}
 
 function Header() {
     return (
@@ -21,15 +40,16 @@ function Header() {
                 </select>
             </div>
         </header>
-    )
+    );
 }
 
-function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, onSelectDegree}) {
-    const endRef = useRef(null)
+function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, onSelectDegree }) {
+    const endRef = useRef(null);
 
     useEffect(() => {
-        endRef.current?.scrollIntoView({ behavior: "smooth" })
-    }, [messages, followups, isTyping])
+        endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages, followups, isTyping]);
+
     return (
         <div className="bg-linear-to-b from-gray-700 to-gray-600 w-5/6 grow rounded-xl shadow-lg p-6 overflow-y-auto relative">
             <ul className="pb-40">
@@ -63,7 +83,8 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, on
                         }`}
                     >
                         {msg.sender === "BOT" ? (
-                            <div className ="prose prose-invert max-w-none leading-[1.8] prose-p:my-2 prose-ul:pl-5 prose-ul:my-2 prose-li:my-1 prose-h2:text-lg
+                            <div
+                                className="prose prose-invert max-w-none leading-[1.8] prose-p:my-2 prose-ul:pl-5 prose-ul:my-2 prose-li:my-1 prose-h2:text-lg
                             prose-h2:mt-4 prose-h2:mb-2 prose-h3:text-base prose-a:text-blue-400 prose-a:border-b prose-a:border-blue-400/60
                             hover:prose-a:text-blue-300 hover:prose-a:border-blue-300 prose-p:text-lg prose-li:text-lg text-[#ffffff]"
                                 dangerouslySetInnerHTML={{
@@ -76,7 +97,7 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, on
                                     )
                                 }}
                             />
-                        ):(
+                        ) : (
                             <span>{msg.content}</span>
                         )}
 
@@ -121,7 +142,7 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, on
             </ul>
             <div ref={endRef} />
         </div>
-    )
+    );
 }
 
 function App() {
@@ -131,6 +152,13 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [conversationId, setConversationId] = useState(null);
     const [degree, setDegree] = useState(null);
+    const eventSourceRef = useRef(null);
+
+    useEffect(() => {
+        return () => {
+            eventSourceRef.current?.close();
+        };
+    }, []);
 
     const handleFollowupClick = (question) => {
         sendMessage(question);
@@ -144,6 +172,8 @@ function App() {
 
     const sendMessage = (text) => {
         if (!text.trim()) return;
+
+        eventSourceRef.current?.close();
         setIsLoading(true);
         setMessages((prev) => [...prev, { sender: "USER", content: text }]);
         setFollowups([]);
@@ -153,40 +183,33 @@ function App() {
         const eventSource = new EventSource(
             `/api/conversation/ask?content=${encodeURIComponent(text)}&conversationId=${conversationId || ""}&method=${method}&level=${degree}`
         );
+        eventSourceRef.current = eventSource;
 
         eventSource.onmessage = (event) => {
             try {
-                let data  = event.data;
-
-                if (data.startsWith("data:")) {
-                    data = data.slice(5).trim();
-                }
-
-                if (data.startsWith("{")) {
-                    const parsed = JSON.parse(data);
-                    if (parsed.type === "conversationId") {
+                const parsed = JSON.parse(event.data);
+                switch (parsed.type) {
+                    case "conversationId":
                         setConversationId(parsed.id);
                         return;
-                    }
-                    if (parsed.type === "followups") {
+                    case "chunk":
+                    case "final":
+                        appendBotChunk(setMessages, parsed.text);
+                        return;
+                    case "followups":
                         setFollowups(parsed.options);
                         setIsLoading(false);
                         eventSource.close();
-                    }
-                } else if (data.length > 0) {
-                    setMessages((prev) => {
-                        const last = prev[prev.length - 1];
-
-                        if (last && last.sender === "BOT") {
-                            return [
-                                ...prev.slice(0, -1),
-                                { ...last, content: last.content + data }
-                            ];
-
-                        } else {
-                            return [...prev, { sender: "BOT", content: data }];
-                        }
-                    });
+                        eventSourceRef.current = null;
+                        return;
+                    case "error":
+                        console.error("Błąd SSE:", parsed.message);
+                        setIsLoading(false);
+                        eventSource.close();
+                        eventSourceRef.current = null;
+                        return;
+                    default:
+                        return;
                 }
             } catch (err) {
                 console.error("Błąd parsowania SSE:", err);
@@ -196,6 +219,7 @@ function App() {
         eventSource.onerror = () => {
             setIsLoading(false);
             eventSource.close();
+            eventSourceRef.current = null;
         };
     };
 
@@ -242,7 +266,7 @@ function TypingIndicator() {
             <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-150"></span>
             <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-300"></span>
         </div>
-    )
+    );
 }
 
 function Footer() {
@@ -250,7 +274,7 @@ function Footer() {
         <footer className="p-2 text-center text-sm text-white bg-gray-900">
             © 2025 TUL Chatbot
         </footer>
-    )
+    );
 }
 
-export default App
+export default App;

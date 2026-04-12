@@ -1,9 +1,10 @@
 spring:
   application:
-   name: Backend
+    name: Backend
+
   ai:
     ollama:
-      base-url: http://host.docker.internal:11434
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
       init:
         pull-model-strategy: never
         timeout: 5m
@@ -15,17 +16,18 @@ spring:
           top_p: 0.2
       embedding:
         model: mxbai-embed-large:335m
+
     vectorstore:
       qdrant:
-        host: qdrant
-        port: 6334
+        host: ${QDRANT_HOST:localhost}
+        port: ${QDRANT_PORT:6334}
         collection-name: chatbot_vectors
         initialize-schema: true
+
   data:
     mongodb:
-      uri: mongodb://root:rootpassword@mongo:27017/chatbotdb?authSource=admin
-
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://root:rootpassword@localhost:27017/chatbot?authSource=admin}
 
 server:
   port: 8080
-  address: 0.0.0.0
+  address: ${SERVER_ADDRESS:127.0.0.1}

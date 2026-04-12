@@ -19,10 +19,14 @@ import reactor.core.scheduler.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class ConversationService {
+    private static final int TARGET_CHUNK_SIZE = 120;
+    private static final int MAX_BUFFER_SIZE = 240;
+
     private final ConversationRepository conversationRepository;
     private final ChatbotGateway chatbotGateway;
     private final RerankerGateway rerankerGateway;
@@ -76,16 +80,7 @@ public class ConversationService {
         return chatbotGateway.response(prompt)
                 .flatMap(chunk -> {
                     buffer.append(chunk);
-
-                    if (buffer.length() >= 120) {
-                        String toSend = buffer.toString();
-                        buffer.setLength(0);
-                        responseBuilder.append(toSend);
-
-                        return Flux.<ChatEvent>just(new BotMessageChunk(toSend));
-                    }
-
-                    return Flux.empty();
+                    return Flux.fromIterable(splitChunks(buffer, responseBuilder));
                 })
                 .concatWith(Flux.defer(() -> {
                     Flux<ChatEvent> finalText = Flux.empty();
@@ -117,7 +112,14 @@ public class ConversationService {
                                     .orElse("ogolne");
 
                     Flux<ChatEvent> followups = generateFollowups(method, answer, similarQuestions, category, lastMessages)
-                            .map(this::parseFollowupsJson)
+                            .map(json -> {
+                                try {
+                                    return objectMapper.readValue(json, new TypeReference<>() {
+                                    });
+                                } catch (Exception e) {
+                                    return List.<String>of();
+                                }
+                            })
                             .map(list -> (ChatEvent) new FollowupsEvent(list))
                             .onErrorReturn(new FollowupsEvent(List.of()));
 
@@ -128,12 +130,54 @@ public class ConversationService {
                 .onErrorResume(err -> Flux.just(new ErrorEvent(err.getMessage())));
     }
 
-    private List<String> parseFollowupsJson(String json) {
-        try {
-            return objectMapper.readValue(json, new TypeReference<>() {});
-        } catch (Exception e) {
-            return List.of();
+    private List<ChatEvent> splitChunks(StringBuilder buffer, StringBuilder responseBuilder) {
+        List<ChatEvent> events = new ArrayList<>();
+        Optional<String> nextChunk = takeReadyChunk(buffer);
+
+        while (nextChunk.isPresent()) {
+            String text = nextChunk.get();
+            responseBuilder.append(text);
+            events.add(new BotMessageChunk(text));
+            nextChunk = takeReadyChunk(buffer);
         }
+
+        return events;
+    }
+
+    private Optional<String> takeReadyChunk(StringBuilder buffer) {
+        if (buffer.length() < TARGET_CHUNK_SIZE) {
+            return Optional.empty();
+        }
+
+        int splitIndex = findLastSeparator(buffer);
+
+        if (splitIndex < TARGET_CHUNK_SIZE && buffer.length() < MAX_BUFFER_SIZE) {
+            return Optional.empty();
+        }
+
+        if (splitIndex <= 0) {
+            String chunk = buffer.toString();
+            buffer.setLength(0);
+            return Optional.of(chunk);
+        }
+
+        String chunk = buffer.substring(0, splitIndex);
+        buffer.delete(0, splitIndex);
+        return Optional.of(chunk);
+    }
+
+    private int findLastSeparator(StringBuilder buffer) {
+        for (int index = buffer.length() - 1; index >= 0; index--) {
+            if (isSeparator(buffer.charAt(index))) {
+                return index + 1;
+            }
+        }
+
+        return -1;
+    }
+
+    private boolean isSeparator(char character) {
+        return Character.isWhitespace(character) || ",.;:!?)]}\"".indexOf(character) >= 0;
     }
 
     public Flux<ChatEvent> startAndStreamBotResponse(String userContent, FollowupMethod method, Degree level) {
