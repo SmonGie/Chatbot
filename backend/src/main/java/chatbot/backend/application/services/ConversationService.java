@@ -15,17 +15,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class ConversationService {
-    private static final int TARGET_CHUNK_SIZE = 120;
-    private static final int MAX_BUFFER_SIZE = 240;
+    private static final int TARGET_CHUNK_SIZE = 40;
+    private static final int MAX_BUFFER_SIZE = 80;
 
     private final ConversationRepository conversationRepository;
     private final ChatbotGateway chatbotGateway;
@@ -60,6 +64,10 @@ public class ConversationService {
     }
 
     public Flux<ChatEvent> streamBotResponse(String conversationId, String query, FollowupMethod method, Degree level) {
+        long startTime = System.currentTimeMillis();
+        AtomicBoolean firstChunkSent = new AtomicBoolean(false);
+        AtomicLong firstChunkTime = new AtomicLong(0);
+        AtomicInteger chunkCount = new AtomicInteger(0);
         Message userMessage = MessageFactory.createUserMessage(query);
         userMessage.setConversationId(conversationId);
         sendMessage(conversationId, userMessage);
@@ -69,7 +77,7 @@ public class ConversationService {
         List<Message> lastMessages = new ArrayList<>(conversation.getLastMessages(4));
         String fixedContent = chatbotGateway.rewrite(query, lastMessages);
 
-        List<VectorDatabaseDocument> similarDocs = vectorDatabaseSearchGateway.findSimilarDocuments(fixedContent, 5, level);
+        List<VectorDatabaseDocument> similarDocs = vectorDatabaseSearchGateway.findSimilarDocuments(fixedContent, 30, level);
         List<VectorDatabaseDocument> reranked = rerankerGateway.rerank(fixedContent, similarDocs);
         List<VectorDatabaseDocument> faqsContext = reranked.stream().limit(5).toList();
         PromptMessage prompt = new PromptMessage(fixedContent, lastMessages ,faqsContext);
@@ -80,7 +88,25 @@ public class ConversationService {
         return chatbotGateway.response(prompt)
                 .flatMap(chunk -> {
                     buffer.append(chunk);
-                    return Flux.fromIterable(splitChunks(buffer, responseBuilder));
+
+                    List<ChatEvent> events = splitChunks(buffer, responseBuilder);
+
+                    for (ChatEvent event : events) {
+                        if (event instanceof BotMessageChunk) {
+
+                            chunkCount.incrementAndGet();
+
+                            if (!firstChunkSent.get()) {
+                                firstChunkSent.set(true);
+                                long ttft = System.currentTimeMillis() - startTime;
+                                firstChunkTime.set(ttft);
+
+                                log.info("TTFT (time to first chunk): {} ms", ttft);
+                            }
+                        }
+                    }
+
+                    return Flux.fromIterable(events);
                 })
                 .concatWith(Flux.defer(() -> {
                     Flux<ChatEvent> finalText = Flux.empty();
@@ -126,7 +152,19 @@ public class ConversationService {
                     return Flux.concat(finalText, followups);
                 }))
                 .publishOn(Schedulers.boundedElastic())
-                .doFinally(_ -> conversationRepository.save(conversation))
+                .doFinally(_ -> {
+                    long totalTime = System.currentTimeMillis() - startTime;
+
+                    log.info("Total latency: {} ms", totalTime);
+                    log.info("Chunk count: {}", chunkCount.get());
+
+                    if (firstChunkTime.get() > 0) {
+                        long streamingTime = totalTime - firstChunkTime.get();
+                        log.info("Streaming duration: {} ms", streamingTime);
+                    }
+
+                    conversationRepository.save(conversation);
+                })
                 .onErrorResume(err -> Flux.just(new ErrorEvent(err.getMessage())));
     }
 
