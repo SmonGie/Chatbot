@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { EventSourceParserStream } from "eventsource-parser/stream";
 import "./App.css";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
@@ -152,11 +153,12 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [conversationId, setConversationId] = useState(null);
     const [degree, setDegree] = useState(null);
-    const eventSourceRef = useRef(null);
+    const abortControllerRef = useRef(null);
 
     useEffect(() => {
         return () => {
-            eventSourceRef.current?.close();
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = null;
         };
     }, []);
 
@@ -170,94 +172,160 @@ function App() {
         }
     };
 
-    const sendMessage = (text) => {
-        if (!text.trim()) return;
+    const sendMessage = async (text) => {
+        if (!text.trim() || degree === null) return;
 
-        eventSourceRef.current?.close();
+        abortControllerRef.current?.abort();
+        const controller = new AbortController();
+        abortControllerRef.current = controller;
+
         setIsLoading(true);
-        setMessages((prev) => [...prev, { sender: "USER", content: text }]);
+        setMessages((prev) => [...prev, {sender: "USER", content: text}]);
         setFollowups([]);
         setInput("");
-        const method = document.getElementById("followupMethod").value;
 
-        const eventSource = new EventSource(
-            `/api/conversation/ask?content=${encodeURIComponent(text)}&conversationId=${conversationId || ""}&method=${method}&level=${degree}`
-        );
-        eventSourceRef.current = eventSource;
+        let reader;
 
-        eventSource.onmessage = (event) => {
-            try {
-                const parsed = JSON.parse(event.data);
+        try {
+            const method = document.getElementById("followupMethod").value;
+
+            const response = await fetch("/api/conversation/ask", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "text/event-stream"
+                },
+                body: JSON.stringify({
+                    content: text,
+                    conversationId,
+                    method,
+                    level: degree
+                }),
+                signal: controller.signal
+            });
+
+            if (!response.ok) {
+                throw new Error(`Błąd HTTP: ${response.status}`);
+            }
+
+            const contentType = response.headers.get("content-type") || "";
+
+            if (!response.body || !contentType.includes("text/event-stream")) {
+                throw new Error("Serwer nie zwrócił strumienia SSE");
+            }
+
+            reader = response.body
+                .pipeThrough(new TextDecoderStream())
+                .pipeThrough(new EventSourceParserStream())
+                .getReader();
+
+            while (true) {
+                const {value, done} = await reader.read();
+                if (
+                    controller.signal.aborted ||
+                    abortControllerRef.current !== controller
+                ) {
+                    return;
+                }
+                if (done) break;
+                if (!value.data) continue;
+
+                const parsed = JSON.parse(value.data);
+
                 switch (parsed.type) {
                     case "conversationId":
                         setConversationId(parsed.id);
-                        return;
+                        break;
+
                     case "chunk":
-                    case "final":
                         appendBotChunk(setMessages, parsed.text);
-                        return;
+                        break;
+
+                    case "final":
+                        setMessages((prev) => {
+                            const message = {
+                                sender: "BOT",
+                                content: parsed.text
+                            };
+
+                            return prev.at(-1)?.sender === "BOT"
+                                ? [...prev.slice(0, -1), message]
+                                : [...prev, message];
+                        });
+                        break;
+
                     case "followups":
                         setFollowups(parsed.options);
-                        setIsLoading(false);
-                        eventSource.close();
-                        eventSourceRef.current = null;
                         return;
+
                     case "error":
-                        console.error("Błąd SSE:", parsed.message);
-                        setIsLoading(false);
-                        eventSource.close();
-                        eventSourceRef.current = null;
-                        return;
+                        throw new Error(
+                            parsed.message || "Błąd generowania odpowiedzi"
+                        );
+
                     default:
-                        return;
+                        break;
                 }
-            } catch (err) {
-                console.error("Błąd parsowania SSE:", err);
             }
-        };
+        } catch (error) {
+            if (
+                !controller.signal.aborted &&
+                abortControllerRef.current === controller
+            ) {
+                console.error("Błąd rozmowy:", error);
+            }
+        } finally {
+            controller.abort();
 
-        eventSource.onerror = () => {
-            setIsLoading(false);
-            eventSource.close();
-            eventSourceRef.current = null;
-        };
-    };
+            if (reader) {
+                await reader.cancel().catch(() => {
+                });
+                reader.releaseLock();
+            }
 
-    return (
-        <div className="min-h-screen flex flex-col bg-[#002147]">
-            <Header />
-            <main className="flex flex-col items-center grow pb-4 w-full">
-                <ChatWindow
-                    messages={messages}
-                    followups={followups}
-                    onFollowupClick={handleFollowupClick}
-                    isTyping={isLoading}
-                    degree={degree}
-                    onSelectDegree={setDegree}
-                />
-                <div className="w-5/6 flex mt-4">
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        disabled={isLoading || degree === null}
-                        className="grow sm:p-4 p-3  text-lg rounded-l-lg border-none outline-none bg-gray-200 text-[#2f2e31] placeholder-[#2f2e31] disabled:opacity-50"
-                        placeholder={isLoading ? "Bot pisze..." : "Wpisz wiadomość..."}
+            if (abortControllerRef.current === controller) {
+                abortControllerRef.current = null;
+                setIsLoading(false);
+            }
+        }
+    }
+
+
+        return (
+            <div className="min-h-screen flex flex-col bg-[#002147]">
+                <Header/>
+                <main className="flex flex-col items-center grow pb-4 w-full">
+                    <ChatWindow
+                        messages={messages}
+                        followups={followups}
+                        onFollowupClick={handleFollowupClick}
+                        isTyping={isLoading}
+                        degree={degree}
+                        onSelectDegree={setDegree}
                     />
-                    <button
-                        onClick={() => sendMessage(input)}
-                        disabled={isLoading || !input.trim() || degree === null}
-                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white sm:px-6 px-3 rounded-r-lg transition-all"
-                    >
-                        {isLoading ? "..." : "Wyślij"}
-                    </button>
-                </div>
-            </main>
-            <Footer />
-        </div>
-    );
-}
+                    <div className="w-5/6 flex mt-4">
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            disabled={isLoading || degree === null}
+                            className="grow sm:p-4 p-3  text-lg rounded-l-lg border-none outline-none bg-gray-200 text-[#2f2e31] placeholder-[#2f2e31] disabled:opacity-50"
+                            placeholder={isLoading ? "Bot pisze..." : "Wpisz wiadomość..."}
+                        />
+                        <button
+                            onClick={() => sendMessage(input)}
+                            disabled={isLoading || !input.trim() || degree === null}
+                            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white sm:px-6 px-3 rounded-r-lg transition-all"
+                        >
+                            {isLoading ? "..." : "Wyślij"}
+                        </button>
+                    </div>
+                </main>
+                <Footer/>
+            </div>
+        );
+    }
 
 function TypingIndicator() {
     return (
@@ -278,3 +346,4 @@ function Footer() {
 }
 
 export default App;
+

@@ -4,6 +4,7 @@ import chatbot.backend.application.chat.*;
 import chatbot.backend.application.enums.Degree;
 import chatbot.backend.application.services.ConversationService;
 import chatbot.backend.domain.enums.FollowupMethod;
+import chatbot.backend.host.requests.AskRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,19 +68,26 @@ public class ConversationController {
                     )
             }
     )
-    @GetMapping(value = "/ask", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PostMapping(
+            value = "/ask",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<ObjectNode>> ask(
-            @NotBlank(message = "Content must not be blank")
-            @Size(max = 2000, message = "Content must not exceed 2000 characters")
-            @RequestParam String content,
-            @RequestParam(required = false) String conversationId,
-            @RequestParam(defaultValue = "RAG") FollowupMethod method,
-            @RequestParam(defaultValue = "all") Degree level
+            @Valid @RequestBody AskRequest request
     ) {
+        String conversationId = request.conversationId();
+
         Flux<ChatEvent> events =
                 (conversationId == null || conversationId.isBlank())
-                        ? conversationService.startAndStreamBotResponse(content, method, level)
-                        : conversationService.streamBotResponse(conversationId, content, method, level);
+                        ? conversationService.startAndStreamBotResponse(
+                        request.content(), request.method(), request.level()
+                )
+                        : conversationService.streamBotResponse(
+                        conversationId,
+                        request.content(),
+                        request.method(),
+                        request.level()
+                );
 
         return events.map(event ->
                 ServerSentEvent.<ObjectNode>builder()
