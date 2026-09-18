@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
@@ -154,7 +155,12 @@ public class ConversationService {
                             .map(list -> (ChatEvent) new FollowupsEvent(list))
                             .onErrorReturn(new FollowupsEvent(List.of()));
 
-                    return Flux.concat(finalText, followups);
+                    Mono<Void> saveConversation = Mono.fromRunnable(() -> {
+                                conversationRepository.save(conversation);
+                            })
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .then();
+                    return Flux.concat(finalText, saveConversation.thenMany(followups));
                 }))
                 .publishOn(Schedulers.boundedElastic())
                 .doFinally(_ -> {
@@ -167,8 +173,6 @@ public class ConversationService {
                         long streamingTime = totalTime - firstChunkTime.get();
                         log.info("Streaming duration: {} ms", streamingTime);
                     }
-
-                    conversationRepository.save(conversation);
                 })
                 .onErrorResume(err -> Flux.just(new ErrorEvent(err.getMessage())));
     }
