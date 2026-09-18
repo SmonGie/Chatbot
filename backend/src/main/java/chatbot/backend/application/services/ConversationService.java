@@ -12,7 +12,9 @@ import chatbot.backend.application.common.interfaces.ChatbotGateway;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 import java.util.ArrayList;
@@ -53,7 +55,10 @@ public class ConversationService {
     }
 
     public void sendMessage(String conversationId, Message message){
-        Conversation conversation = conversationRepository.findById(conversationId).orElseThrow();
+        Conversation conversation = conversationRepository.findById(conversationId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Conversation not found"
+        ));
         message.setConversationId(conversationId);
         conversation.sendMessage(message);
         conversationRepository.save(conversation);
