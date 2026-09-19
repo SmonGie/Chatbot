@@ -1,7 +1,27 @@
-import { useState, useEffect, useRef } from "react"
-import "./App.css"
+import { useState, useEffect, useRef } from "react";
+import { EventSourceParserStream } from "eventsource-parser/stream";
+import "./App.css";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
+
+function appendBotChunk(setMessages, text) {
+    if (!text) {
+        return;
+    }
+
+    setMessages((prev) => {
+        const last = prev[prev.length - 1];
+
+        if (last && last.sender === "BOT") {
+            return [
+                ...prev.slice(0, -1),
+                { ...last, content: last.content + text }
+            ];
+        }
+
+        return [...prev, { sender: "BOT", content: text }];
+    });
+}
 
 function Header() {
     return (
@@ -21,15 +41,16 @@ function Header() {
                 </select>
             </div>
         </header>
-    )
+    );
 }
 
-function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, onSelectDegree}) {
-    const endRef = useRef(null)
+function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, onSelectDegree, followupsError }) {
+    const endRef = useRef(null);
 
     useEffect(() => {
-        endRef.current?.scrollIntoView({ behavior: "smooth" })
-    }, [messages, followups, isTyping])
+        endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages, followups, isTyping]);
+
     return (
         <div className="bg-linear-to-b from-gray-700 to-gray-600 w-5/6 grow rounded-xl shadow-lg p-6 overflow-y-auto relative">
             <ul className="pb-40">
@@ -63,7 +84,8 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, on
                         }`}
                     >
                         {msg.sender === "BOT" ? (
-                            <div className ="prose prose-invert max-w-none leading-[1.8] prose-p:my-2 prose-ul:pl-5 prose-ul:my-2 prose-li:my-1 prose-h2:text-lg
+                            <div
+                                className="prose prose-invert max-w-none leading-[1.8] prose-p:my-2 prose-ul:pl-5 prose-ul:my-2 prose-li:my-1 prose-h2:text-lg
                             prose-h2:mt-4 prose-h2:mb-2 prose-h3:text-base prose-a:text-blue-400 prose-a:border-b prose-a:border-blue-400/60
                             hover:prose-a:text-blue-300 hover:prose-a:border-blue-300 prose-p:text-lg prose-li:text-lg text-[#ffffff]"
                                 dangerouslySetInnerHTML={{
@@ -76,7 +98,7 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, on
                                     )
                                 }}
                             />
-                        ):(
+                        ) : (
                             <span>{msg.content}</span>
                         )}
 
@@ -118,10 +140,15 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, on
                         ))}
                     </div>
                 )}
+                {followupsError && (
+                    <li role="status" className="mt-3 text-yellow-300">
+                        {followupsError}
+                    </li>
+                )}
             </ul>
             <div ref={endRef} />
         </div>
-    )
+    );
 }
 
 function App() {
@@ -131,6 +158,15 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [conversationId, setConversationId] = useState(null);
     const [degree, setDegree] = useState(null);
+    const abortControllerRef = useRef(null);
+    const [followupsError, setFollowupsError] = useState(null);
+
+    useEffect(() => {
+        return () => {
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = null;
+        };
+    }, []);
 
     const handleFollowupClick = (question) => {
         sendMessage(question);
@@ -142,98 +178,166 @@ function App() {
         }
     };
 
-    const sendMessage = (text) => {
-        if (!text.trim()) return;
+    const sendMessage = async (text) => {
+        if (!text.trim() || degree === null) return;
+
+        abortControllerRef.current?.abort();
+        const controller = new AbortController();
+        abortControllerRef.current = controller;
+
         setIsLoading(true);
-        setMessages((prev) => [...prev, { sender: "USER", content: text }]);
+        setMessages((prev) => [...prev, {sender: "USER", content: text}]);
         setFollowups([]);
         setInput("");
-        const method = document.getElementById("followupMethod").value;
+        setFollowupsError(null);
 
-        const eventSource = new EventSource(
-            `/api/conversation/ask?content=${encodeURIComponent(text)}&conversationId=${conversationId || ""}&method=${method}&level=${degree}`
-        );
+        let reader;
 
-        eventSource.onmessage = (event) => {
-            try {
-                let data  = event.data;
+        try {
+            const method = document.getElementById("followupMethod").value;
 
-                if (data.startsWith("data:")) {
-                    data = data.slice(5).trim();
-                }
+            const response = await fetch("/api/conversation/ask", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "text/event-stream"
+                },
+                body: JSON.stringify({
+                    content: text,
+                    conversationId,
+                    method,
+                    level: degree
+                }),
+                signal: controller.signal
+            });
 
-                if (data.startsWith("{")) {
-                    const parsed = JSON.parse(data);
-                    if (parsed.type === "conversationId") {
-                        setConversationId(parsed.id);
-                        return;
-                    }
-                    if (parsed.type === "followups") {
-                        setFollowups(parsed.options);
-                        setIsLoading(false);
-                        eventSource.close();
-                    }
-                } else if (data.length > 0) {
-                    setMessages((prev) => {
-                        const last = prev[prev.length - 1];
-
-                        if (last && last.sender === "BOT") {
-                            return [
-                                ...prev.slice(0, -1),
-                                { ...last, content: last.content + data }
-                            ];
-
-                        } else {
-                            return [...prev, { sender: "BOT", content: data }];
-                        }
-                    });
-                }
-            } catch (err) {
-                console.error("Błąd parsowania SSE:", err);
+            if (!response.ok) {
+                throw new Error(`Błąd HTTP: ${response.status}`);
             }
-        };
 
-        eventSource.onerror = () => {
-            setIsLoading(false);
-            eventSource.close();
-        };
-    };
+            const contentType = response.headers.get("content-type") || "";
 
-    return (
-        <div className="min-h-screen flex flex-col bg-[#002147]">
-            <Header />
-            <main className="flex flex-col items-center grow pb-4 w-full">
-                <ChatWindow
-                    messages={messages}
-                    followups={followups}
-                    onFollowupClick={handleFollowupClick}
-                    isTyping={isLoading}
-                    degree={degree}
-                    onSelectDegree={setDegree}
-                />
-                <div className="w-5/6 flex mt-4">
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        disabled={isLoading || degree === null}
-                        className="grow sm:p-4 p-3  text-lg rounded-l-lg border-none outline-none bg-gray-200 text-[#2f2e31] placeholder-[#2f2e31] disabled:opacity-50"
-                        placeholder={isLoading ? "Bot pisze..." : "Wpisz wiadomość..."}
+            if (!response.body || !contentType.includes("text/event-stream")) {
+                throw new Error("Serwer nie zwrócił strumienia SSE");
+            }
+
+            reader = response.body
+                .pipeThrough(new TextDecoderStream())
+                .pipeThrough(new EventSourceParserStream())
+                .getReader();
+
+            while (true) {
+                const {value, done} = await reader.read();
+                if (
+                    controller.signal.aborted ||
+                    abortControllerRef.current !== controller
+                ) {
+                    return;
+                }
+                if (done) break;
+                if (!value.data) continue;
+
+                const parsed = JSON.parse(value.data);
+
+                switch (parsed.type) {
+                    case "conversationId":
+                        setConversationId(parsed.id);
+                        break;
+
+                    case "chunk":
+                        appendBotChunk(setMessages, parsed.text);
+                        break;
+
+                    case "final":
+                        setMessages((prev) => {
+                            const message = {
+                                sender: "BOT",
+                                content: parsed.text
+                            };
+
+                            return prev.at(-1)?.sender === "BOT"
+                                ? [...prev.slice(0, -1), message]
+                                : [...prev, message];
+                        });
+                        break;
+
+                    case "followups":
+                        setFollowups(parsed.options);
+                        return;
+
+                    case "error":
+                        throw new Error(
+                            parsed.message || "Błąd generowania odpowiedzi"
+                        );
+
+                    case "followupsError":
+                        setFollowupsError(parsed.message);
+                        return;
+
+                    default:
+                        break;
+                }
+            }
+        } catch (error) {
+            if (
+                !controller.signal.aborted &&
+                abortControllerRef.current === controller
+            ) {
+                console.error("Błąd rozmowy:", error);
+            }
+        } finally {
+            controller.abort();
+
+            if (reader) {
+                await reader.cancel().catch(() => {
+                });
+                reader.releaseLock();
+            }
+
+            if (abortControllerRef.current === controller) {
+                abortControllerRef.current = null;
+                setIsLoading(false);
+            }
+        }
+    }
+
+
+        return (
+            <div className="min-h-screen flex flex-col bg-[#002147]">
+                <Header/>
+                <main className="flex flex-col items-center grow pb-4 w-full">
+                    <ChatWindow
+                        messages={messages}
+                        followups={followups}
+                        onFollowupClick={handleFollowupClick}
+                        isTyping={isLoading}
+                        degree={degree}
+                        onSelectDegree={setDegree}
+                        followupsError={followupsError}
                     />
-                    <button
-                        onClick={() => sendMessage(input)}
-                        disabled={isLoading || !input.trim() || degree === null}
-                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white sm:px-6 px-3 rounded-r-lg transition-all"
-                    >
-                        {isLoading ? "..." : "Wyślij"}
-                    </button>
-                </div>
-            </main>
-            <Footer />
-        </div>
-    );
-}
+                    <div className="w-5/6 flex mt-4">
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            disabled={isLoading || degree === null}
+                            className="grow sm:p-4 p-3  text-lg rounded-l-lg border-none outline-none bg-gray-200 text-[#2f2e31] placeholder-[#2f2e31] disabled:opacity-50"
+                            placeholder={isLoading ? "Bot pisze..." : "Wpisz wiadomość..."}
+                        />
+                        <button
+                            onClick={() => sendMessage(input)}
+                            disabled={isLoading || !input.trim() || degree === null}
+                            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white sm:px-6 px-3 rounded-r-lg transition-all"
+                        >
+                            {isLoading ? "..." : "Wyślij"}
+                        </button>
+                    </div>
+                </main>
+                <Footer/>
+            </div>
+        );
+    }
 
 function TypingIndicator() {
     return (
@@ -242,7 +346,7 @@ function TypingIndicator() {
             <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-150"></span>
             <span className="w-2 h-2 bg-white rounded-full animate-bounce delay-300"></span>
         </div>
-    )
+    );
 }
 
 function Footer() {
@@ -250,7 +354,8 @@ function Footer() {
         <footer className="p-2 text-center text-sm text-white bg-gray-900">
             © 2025 TUL Chatbot
         </footer>
-    )
+    );
 }
 
-export default App
+export default App;
+
