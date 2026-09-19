@@ -6,6 +6,7 @@ import chatbot.backend.application.knowledge.VectorDatabaseDocument;
 import chatbot.backend.domain.entities.Message;
 import chatbot.backend.domain.enums.Sender;
 import chatbot.backend.domain.enums.TemplatesFollowup;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jspecify.annotations.NonNull;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -154,8 +155,11 @@ public class OllamaChatbotGateway implements ChatbotGateway {
                             .toList()
             );
             return Flux.just(json);
-        } catch (Exception e) {
-            return Flux.just("[]");
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(
+                    "Templates for followups could not be serialized into JSON format",
+                    e
+            );
         }
     }
 
@@ -168,10 +172,13 @@ public class OllamaChatbotGateway implements ChatbotGateway {
                     text = text.trim();
                     int start = text.indexOf('[');
                     int end = text.lastIndexOf(']') + 1;
-                    if (start >= 0 && end > start) {
-                        return text.substring(start, end);
+                    if (start < 0 || end <= start) {
+                        throw new IllegalStateException(
+                                "Model's answer does not consist of a JSON array of followup questions"
+                        );
                     }
-                    return "[]";
+
+                    return text.substring(start, end);
                 })
                 .flux()
                 .onErrorReturn("[]");

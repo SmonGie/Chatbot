@@ -44,7 +44,7 @@ function Header() {
     );
 }
 
-function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, onSelectDegree }) {
+function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, onSelectDegree, followupsError }) {
     const endRef = useRef(null);
 
     useEffect(() => {
@@ -140,6 +140,11 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, on
                         ))}
                     </div>
                 )}
+                {followupsError && (
+                    <li role="status" className="mt-3 text-yellow-300">
+                        {followupsError}
+                    </li>
+                )}
             </ul>
             <div ref={endRef} />
         </div>
@@ -154,6 +159,7 @@ function App() {
     const [conversationId, setConversationId] = useState(null);
     const [degree, setDegree] = useState(null);
     const abortControllerRef = useRef(null);
+    const [followupsError, setFollowupsError] = useState(null);
 
     useEffect(() => {
         return () => {
@@ -183,6 +189,7 @@ function App() {
         setMessages((prev) => [...prev, {sender: "USER", content: text}]);
         setFollowups([]);
         setInput("");
+        setFollowupsError(null);
 
         let reader;
 
@@ -263,6 +270,10 @@ function App() {
                             parsed.message || "Błąd generowania odpowiedzi"
                         );
 
+                    case "followupsError":
+                        setFollowupsError(parsed.message);
+                        return;
+
                     default:
                         break;
                 }
@@ -302,6 +313,7 @@ function App() {
                         isTyping={isLoading}
                         degree={degree}
                         onSelectDegree={setDegree}
+                        followupsError={followupsError}
                     />
                     <div className="w-5/6 flex mt-4">
                         <input

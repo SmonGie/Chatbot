@@ -117,6 +117,10 @@ public class ConversationController {
             case ConversationStart convId -> objectMapper.createObjectNode()
                     .put("type", "conversationId")
                     .put("id", convId.conversationId());
+
+            case FollowupsErrorEvent error -> objectMapper.createObjectNode()
+                    .put("type", "followupsError")
+                    .put("message", error.errorMessage());
         };
     }
 }

@@ -9,6 +9,7 @@ import chatbot.backend.domain.entities.*;
 import chatbot.backend.domain.enums.FollowupMethod;
 import chatbot.backend.domain.repositories.ConversationRepository;
 import chatbot.backend.application.common.interfaces.ChatbotGateway;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,13 +57,13 @@ public class ConversationService {
     }
 
     public void sendMessage(String conversationId, Message message){
-        Conversation conversation = conversationRepository.findById(conversationId).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Conversation not found"
-        ));
         message.setConversationId(conversationId);
-        conversation.sendMessage(message);
-        conversationRepository.save(conversation);
+
+        boolean found = conversationRepository.appendMessage(conversationId, message);
+
+        if (!found) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conversation not found");
+        }
     }
 
     public Conversation getConversationById(String conversationId) {
@@ -125,11 +126,13 @@ public class ConversationService {
                         finalText = Flux.just(new BotMessageChunk(remainingData));
                     }
 
-                    Message botMessage = MessageFactory.createBotMessage(responseBuilder.toString());
-                    botMessage.setConversationId(conversationId);
-                    conversation.sendMessage(botMessage);
-
                     String answer = responseBuilder.toString();
+                    Message botMessage = MessageFactory.createBotMessage(answer);
+
+                    Mono<Void> saveAnswer = Mono.fromRunnable(() -> {
+                        sendMessage(conversationId, botMessage);
+                    }).subscribeOn(Schedulers.boundedElastic()).then();
+
 
                     List<String> similarQuestions = faqsContext.stream()
                             .map(VectorDatabaseDocument::question)
@@ -143,24 +146,32 @@ public class ConversationService {
                                     .map(Map.Entry::getKey)
                                     .orElse("ogolne");
 
-                    Flux<ChatEvent> followups = generateFollowups(method, answer, similarQuestions, category, lastMessages)
+                    Flux<ChatEvent> followups = Flux.defer(() ->generateFollowups(method, answer, similarQuestions, category, lastMessages))
                             .map(json -> {
                                 try {
-                                    return objectMapper.readValue(json, new TypeReference<>() {
+                                    return objectMapper.readValue(json, new TypeReference<List<String>>() {
                                     });
-                                } catch (Exception e) {
-                                    return List.<String>of();
+                                } catch (JsonProcessingException e) {
+                                    throw new IllegalStateException(
+                                            "Invalid JSON of followup questions",
+                                            e
+                                    );
                                 }
                             })
                             .map(list -> (ChatEvent) new FollowupsEvent(list))
-                            .onErrorReturn(new FollowupsEvent(List.of()));
+                            .onErrorResume(error -> {
+                                log.warn(
+                                        "Followups could not be generated for conversation {}",
+                                        conversationId,
+                                        error
+                                );
 
-                    Mono<Void> saveConversation = Mono.fromRunnable(() -> {
-                                conversationRepository.save(conversation);
-                            })
-                            .subscribeOn(Schedulers.boundedElastic())
-                            .then();
-                    return Flux.concat(finalText, saveConversation.thenMany(followups));
+                                return Flux.just(new FollowupsErrorEvent(
+                                        "Additional followups were not generated."
+                                ));
+                            });
+
+                    return Flux.concat(finalText, saveAnswer.thenMany(followups));
                 }))
                 .publishOn(Schedulers.boundedElastic())
                 .doFinally(_ -> {
