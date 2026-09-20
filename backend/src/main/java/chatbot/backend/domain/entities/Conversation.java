@@ -11,14 +11,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Setter
 
 @Document(collection = "conversations")
 public class Conversation {
     @Id
     private String id;
-    private List<Message> messages;
-    private Instant createdAt;
+    private final List<Message> messages;
+    private final Instant createdAt;
 
     Conversation() {
         this.id = UUID.randomUUID().toString();
@@ -26,12 +25,20 @@ public class Conversation {
         messages = new ArrayList<>();
     }
 
-    public List<Message> getLastMessages(int amount) {
-        int size = messages.size();
-        return messages.subList(Math.max(0, size - amount), size);
+    public List<Message> getMessages() {
+        return List.copyOf(messages);
     }
 
-    public void sendMessage(Message message){
-        this.messages.add(message);
+    public List<Message> getLastMessages(int amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException(
+                    "Message count cannot be negative"
+            );
+        }
+
+        int size = messages.size();
+        return List.copyOf(
+                messages.subList(Math.max(0, size - amount), size)
+        );
     }
 }

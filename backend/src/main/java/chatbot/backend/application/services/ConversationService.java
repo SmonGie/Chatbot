@@ -43,14 +43,14 @@ public class ConversationService {
 
     public Conversation startConversation(){
         Conversation conversation = ConversationFactory.createConversation();
-        conversation.setCreatedAt(java.time.Instant.now());
         return conversationRepository.save(conversation);
     }
 
-    public void sendMessage(String conversationId, Message message){
-        message.setConversationId(conversationId);
-
-        boolean found = conversationRepository.appendMessage(conversationId, message);
+    public void sendMessage(Message message){
+        boolean found = conversationRepository.appendMessage(
+                message.getConversationId(),
+                message
+        );
 
         if (!found) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conversation not found");
@@ -66,9 +66,8 @@ public class ConversationService {
         AtomicBoolean firstChunkSent = new AtomicBoolean(false);
         AtomicLong firstChunkTime = new AtomicLong(0);
         AtomicInteger chunkCount = new AtomicInteger(0);
-        Message userMessage = MessageFactory.createUserMessage(query);
-        userMessage.setConversationId(conversationId);
-        sendMessage(conversationId, userMessage);
+        Message userMessage = MessageFactory.createUserMessage(conversationId, query);
+        sendMessage(userMessage);
 
         Conversation conversation = getConversationById(conversationId);
 
@@ -137,13 +136,9 @@ public class ConversationService {
                 .orElseGet(Flux::empty);
 
         String answer = chunkBuffer.getFullResponse();
-        Message botMessage = MessageFactory.createBotMessage(answer);
+        Message botMessage = MessageFactory.createBotMessage(conversationId, answer);
 
-        Mono<Void> saveAnswer = Mono.fromRunnable(() -> {
-            sendMessage(conversationId, botMessage);
-        }).subscribeOn(Schedulers.boundedElastic()).then();
-
-
+        Mono<Void> saveAnswer = Mono.fromRunnable(() -> sendMessage(botMessage)).subscribeOn(Schedulers.boundedElastic()).then();
 
         Flux<ChatEvent> followups = Flux.defer(() ->followupsService.generateFollowups(method, answer, context, lastMessages))
                 .map(list -> (ChatEvent) new FollowupsEvent(list))
