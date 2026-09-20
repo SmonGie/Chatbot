@@ -57,44 +57,38 @@ public class ConversationService {
         }
     }
 
-    public Conversation getConversationById(String conversationId) {
-        return conversationRepository.findById(conversationId).orElse(null);
-    }
-
     public Flux<ChatEvent> streamBotResponse(String conversationId, String query, FollowupMethod method, Degree level) {
-        long startTime = System.currentTimeMillis();
-        AtomicBoolean firstChunkSent = new AtomicBoolean(false);
-        AtomicLong firstChunkTime = new AtomicLong(0);
-        AtomicInteger chunkCount = new AtomicInteger(0);
-        Message userMessage = MessageFactory.createUserMessage(conversationId, query);
-        sendMessage(userMessage);
-
-        Conversation conversation = getConversationById(conversationId);
-
-        List<Message> lastMessages = new ArrayList<>(conversation.getLastMessages(4));
-        String fixedContent = chatbotGateway.rewrite(query, lastMessages);
-
-        List<VectorDatabaseDocument> similarDocs = vectorDatabaseSearchGateway.findSimilarDocuments(fixedContent, 30, level);
-        List<VectorDatabaseDocument> reranked = rerankerGateway.rerank(fixedContent, similarDocs);
-        List<VectorDatabaseDocument> faqsContext = reranked.stream().limit(5).toList();
-        PromptMessage prompt = new PromptMessage(fixedContent, lastMessages ,faqsContext);
         return Flux.defer(() -> {
+            long startTime = System.currentTimeMillis();
+            AtomicBoolean firstChunkSent = new AtomicBoolean(false);
+            AtomicLong firstChunkTime = new AtomicLong(0);
+            AtomicInteger chunkCount = new AtomicInteger(0);
+
             ResponseChunkBuffer chunkBuffer = new ResponseChunkBuffer();
-            return chatbotGateway.response(prompt)
-                    .flatMap(chunk -> {
-                        List<ChatEvent> events = chunkBuffer.append(chunk).stream()
-                                .<ChatEvent>map(BotMessageChunk::new)
-                                .toList();
-                        return Flux.fromIterable(events);
-                    })
-                    .concatWith(Flux.defer(() -> completeResponse(
-                            conversationId,
-                            chunkBuffer,
-                            method,
-                            faqsContext,
-                            lastMessages
-                            )
-                    ))
+            return Mono.fromCallable(() ->
+                            preparePrompt(conversationId, query, level)
+                    )
+                    .subscribeOn(Schedulers.boundedElastic())
+                    .flatMapMany(prompt ->
+                            chatbotGateway.response(prompt)
+                                    .flatMap(chunk -> {
+                                        List<ChatEvent> events =
+                                                chunkBuffer.append(chunk).stream()
+                                                        .<ChatEvent>map(BotMessageChunk::new)
+                                                        .toList();
+
+                                        return Flux.fromIterable(events);
+                                    })
+                                    .concatWith(Flux.defer(() ->
+                                            completeResponse(
+                                                    conversationId,
+                                                    chunkBuffer,
+                                                    method,
+                                                    prompt.knowledgeContext(),
+                                                    prompt.history()
+                                            )
+                                    ))
+                    )
                     .doOnNext(event -> {
                         if (event instanceof BotMessageChunk) {
                             chunkCount.incrementAndGet();
@@ -108,7 +102,15 @@ public class ConversationService {
                             }
                         }
                     })
-                    .publishOn(Schedulers.boundedElastic())
+                    .onErrorResume(error -> {
+                        log.warn("Response failed for conversation {}", conversationId, error);
+                        String message = "Nie udało się przygotować lub zapisać odpowiedzi.";
+
+                        if (error instanceof ResponseStatusException exception && exception.getStatusCode().value() == 404) {
+                            message = "Nie znaleziono rozmowy. Rozpocznij nową rozmowę.";
+                        }
+                        return Flux.just(new ErrorEvent(message));
+                    })
                     .doFinally(_ -> {
                         long totalTime = System.currentTimeMillis() - startTime;
 
@@ -119,8 +121,7 @@ public class ConversationService {
                             long streamingTime = totalTime - firstChunkTime.get();
                             log.info("Streaming duration: {} ms", streamingTime);
                         }
-                    })
-                    .onErrorResume(err -> Flux.just(new ErrorEvent(err.getMessage())));
+                    });
         });
     }
 
@@ -158,8 +159,36 @@ public class ConversationService {
     }
 
     public Flux<ChatEvent> startAndStreamBotResponse(String userContent, FollowupMethod method, Degree level) {
-        Conversation conversation = startConversation();
-        ChatEvent convId = new ConversationStart(conversation.getId());
-        return Flux.concat(Flux.just(convId), streamBotResponse(conversation.getId(), userContent, method, level));
+        return Mono.fromCallable(this::startConversation)
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMapMany(conversation ->
+                        Flux.concat(
+                                Flux.<ChatEvent>just(new ConversationStart(conversation.getId())),
+                                streamBotResponse(conversation.getId(), userContent, method, level)
+                        )
+                )
+                .onErrorResume(error -> {
+                    log.warn("New conversation failed", error);
+
+                    return Flux.just(new ErrorEvent("Nie udało się utworzyć nowej rozmowy."));
+                });
+    }
+
+    private PromptMessage preparePrompt(String conversationId, String query, Degree level){
+        Message userMessage = MessageFactory.createUserMessage(conversationId, query);
+        sendMessage(userMessage);
+
+        Conversation conversation = conversationRepository
+                .findById(conversationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conversation not found"));
+
+        List<Message> history = new ArrayList<>(conversation.getLastMessages(4));
+
+        String rewrittenQuery = chatbotGateway.rewrite(query, history);
+
+        List<VectorDatabaseDocument> documents =vectorDatabaseSearchGateway.findSimilarDocuments(rewrittenQuery, 30, level);
+        List<VectorDatabaseDocument> context = rerankerGateway.rerank(rewrittenQuery, documents).stream().limit(5).toList();
+
+        return new PromptMessage(rewrittenQuery, history, context);
     }
 }

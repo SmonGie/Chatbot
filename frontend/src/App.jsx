@@ -44,12 +44,12 @@ function Header() {
     );
 }
 
-function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, onSelectDegree, followupsError }) {
+function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, onSelectDegree, followupsError, conversationError}) {
     const endRef = useRef(null);
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages, followups, isTyping]);
+    }, [messages, followups, isTyping, followupsError, conversationError]);
 
     return (
         <div className="bg-linear-to-b from-gray-700 to-gray-600 w-5/6 grow rounded-xl shadow-lg p-6 overflow-y-auto relative">
@@ -145,6 +145,11 @@ function ChatWindow({ messages, followups, onFollowupClick, isTyping, degree, on
                         {followupsError}
                     </li>
                 )}
+                {conversationError && (
+                    <li role="alert" className="mt-3 text-red-300">
+                        {conversationError}
+                    </li>
+                )}
             </ul>
             <div ref={endRef} />
         </div>
@@ -160,6 +165,7 @@ function App() {
     const [degree, setDegree] = useState(null);
     const abortControllerRef = useRef(null);
     const [followupsError, setFollowupsError] = useState(null);
+    const [conversationError, setConversationError] = useState(null);
 
     useEffect(() => {
         return () => {
@@ -185,6 +191,7 @@ function App() {
         const controller = new AbortController();
         abortControllerRef.current = controller;
 
+        setConversationError(null);
         setIsLoading(true);
         setMessages((prev) => [...prev, {sender: "USER", content: text}]);
         setFollowups([]);
@@ -234,7 +241,11 @@ function App() {
                 ) {
                     return;
                 }
-                if (done) break;
+                if (done) {
+                    throw new Error(
+                        "Strumień zakończył się przed zakończeniem rozmowy."
+                    );
+                };
                 if (!value.data) continue;
 
                 const parsed = JSON.parse(value.data);
@@ -284,6 +295,10 @@ function App() {
                 abortControllerRef.current === controller
             ) {
                 console.error("Błąd rozmowy:", error);
+
+                setConversationError(
+                    error.message || "Przerwano połączenie z serwerem."
+                );
             }
         } finally {
             controller.abort();
