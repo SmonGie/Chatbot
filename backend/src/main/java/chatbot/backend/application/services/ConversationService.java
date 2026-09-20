@@ -9,9 +9,6 @@ import chatbot.backend.domain.entities.*;
 import chatbot.backend.domain.enums.FollowupMethod;
 import chatbot.backend.domain.repositories.ConversationRepository;
 import chatbot.backend.application.common.interfaces.ChatbotGateway;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,86 +18,79 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class ConversationService {
-    private static final int TARGET_CHUNK_SIZE = 40;
-    private static final int MAX_BUFFER_SIZE = 80;
-
     private final ConversationRepository conversationRepository;
     private final ChatbotGateway chatbotGateway;
     private final RerankerGateway rerankerGateway;
-    private final ObjectMapper objectMapper;
     private final VectorDatabaseSearchGateway vectorDatabaseSearchGateway;
+    private final FollowupsService followupsService;
 
     @Autowired
-    public ConversationService(ConversationRepository conversationRepository, ChatbotGateway chatbotGateway, RerankerGateway rerankerGateway, ObjectMapper objectMapper, VectorDatabaseSearchGateway vectorDatabaseSearchGateway) {
+    public ConversationService(ConversationRepository conversationRepository, ChatbotGateway chatbotGateway, RerankerGateway rerankerGateway, VectorDatabaseSearchGateway vectorDatabaseSearchGateway, FollowupsService followupsService) {
         this.conversationRepository = conversationRepository;
         this.chatbotGateway = chatbotGateway;
         this.rerankerGateway = rerankerGateway;
-        this.objectMapper = objectMapper;
         this.vectorDatabaseSearchGateway = vectorDatabaseSearchGateway;
+        this.followupsService = followupsService;
     }
 
     public Conversation startConversation(){
         Conversation conversation = ConversationFactory.createConversation();
-        conversation.setCreatedAt(java.time.Instant.now());
         return conversationRepository.save(conversation);
     }
 
-    public void sendMessage(String conversationId, Message message){
-        message.setConversationId(conversationId);
-
-        boolean found = conversationRepository.appendMessage(conversationId, message);
+    public void sendMessage(Message message){
+        boolean found = conversationRepository.appendMessage(
+                message.getConversationId(),
+                message
+        );
 
         if (!found) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conversation not found");
         }
     }
 
-    public Conversation getConversationById(String conversationId) {
-        return conversationRepository.findById(conversationId).orElse(null);
-    }
-
     public Flux<ChatEvent> streamBotResponse(String conversationId, String query, FollowupMethod method, Degree level) {
-        long startTime = System.currentTimeMillis();
-        AtomicBoolean firstChunkSent = new AtomicBoolean(false);
-        AtomicLong firstChunkTime = new AtomicLong(0);
-        AtomicInteger chunkCount = new AtomicInteger(0);
-        Message userMessage = MessageFactory.createUserMessage(query);
-        userMessage.setConversationId(conversationId);
-        sendMessage(conversationId, userMessage);
+        return Flux.defer(() -> {
+            long startTime = System.currentTimeMillis();
+            AtomicBoolean firstChunkSent = new AtomicBoolean(false);
+            AtomicLong firstChunkTime = new AtomicLong(0);
+            AtomicInteger chunkCount = new AtomicInteger(0);
 
-        Conversation conversation = getConversationById(conversationId);
+            ResponseChunkBuffer chunkBuffer = new ResponseChunkBuffer();
+            return Mono.fromCallable(() ->
+                            preparePrompt(conversationId, query, level)
+                    )
+                    .subscribeOn(Schedulers.boundedElastic())
+                    .flatMapMany(prompt ->
+                            chatbotGateway.response(prompt)
+                                    .flatMap(chunk -> {
+                                        List<ChatEvent> events =
+                                                chunkBuffer.append(chunk).stream()
+                                                        .<ChatEvent>map(BotMessageChunk::new)
+                                                        .toList();
 
-        List<Message> lastMessages = new ArrayList<>(conversation.getLastMessages(4));
-        String fixedContent = chatbotGateway.rewrite(query, lastMessages);
-
-        List<VectorDatabaseDocument> similarDocs = vectorDatabaseSearchGateway.findSimilarDocuments(fixedContent, 30, level);
-        List<VectorDatabaseDocument> reranked = rerankerGateway.rerank(fixedContent, similarDocs);
-        List<VectorDatabaseDocument> faqsContext = reranked.stream().limit(5).toList();
-        PromptMessage prompt = new PromptMessage(fixedContent, lastMessages ,faqsContext);
-
-        StringBuilder responseBuilder = new StringBuilder();
-        StringBuilder buffer = new StringBuilder();
-
-        return chatbotGateway.response(prompt)
-                .flatMap(chunk -> {
-                    buffer.append(chunk);
-
-                    List<ChatEvent> events = splitChunks(buffer, responseBuilder);
-
-                    for (ChatEvent event : events) {
+                                        return Flux.fromIterable(events);
+                                    })
+                                    .concatWith(Flux.defer(() ->
+                                            completeResponse(
+                                                    conversationId,
+                                                    chunkBuffer,
+                                                    method,
+                                                    prompt.knowledgeContext(),
+                                                    prompt.history()
+                                            )
+                                    ))
+                    )
+                    .doOnNext(event -> {
                         if (event instanceof BotMessageChunk) {
-
                             chunkCount.incrementAndGet();
 
                             if (!firstChunkSent.get()) {
@@ -111,150 +101,94 @@ public class ConversationService {
                                 log.info("TTFT (time to first chunk): {} ms", ttft);
                             }
                         }
-                    }
+                    })
+                    .onErrorResume(error -> {
+                        log.warn("Response failed for conversation {}", conversationId, error);
+                        String message = "Nie udało się przygotować lub zapisać odpowiedzi.";
 
-                    return Flux.fromIterable(events);
-                })
-                .concatWith(Flux.defer(() -> {
-                    Flux<ChatEvent> finalText = Flux.empty();
+                        if (error instanceof ResponseStatusException exception && exception.getStatusCode().value() == 404) {
+                            message = "Nie znaleziono rozmowy. Rozpocznij nową rozmowę.";
+                        }
+                        return Flux.just(new ErrorEvent(message));
+                    })
+                    .doFinally(_ -> {
+                        long totalTime = System.currentTimeMillis() - startTime;
 
-                    if (!buffer.isEmpty()) {
-                        String remainingData = buffer.toString();
-                        buffer.setLength(0);
-                        responseBuilder.append(remainingData);
+                        log.info("Total latency: {} ms", totalTime);
+                        log.info("Chunk count: {}", chunkCount.get());
 
-                        finalText = Flux.just(new BotMessageChunk(remainingData));
-                    }
-
-                    String answer = responseBuilder.toString();
-                    Message botMessage = MessageFactory.createBotMessage(answer);
-
-                    Mono<Void> saveAnswer = Mono.fromRunnable(() -> {
-                        sendMessage(conversationId, botMessage);
-                    }).subscribeOn(Schedulers.boundedElastic()).then();
-
-
-                    List<String> similarQuestions = faqsContext.stream()
-                            .map(VectorDatabaseDocument::question)
-                            .toList();
-
-                    String category = faqsContext.stream()
-                            .map(VectorDatabaseDocument::category)
-                            .collect(Collectors.groupingBy(typ -> typ, Collectors.counting()))
-                                    .entrySet().stream()
-                                    .max(Map.Entry.comparingByValue())
-                                    .map(Map.Entry::getKey)
-                                    .orElse("ogolne");
-
-                    Flux<ChatEvent> followups = Flux.defer(() ->generateFollowups(method, answer, similarQuestions, category, lastMessages))
-                            .map(json -> {
-                                try {
-                                    return objectMapper.readValue(json, new TypeReference<List<String>>() {
-                                    });
-                                } catch (JsonProcessingException e) {
-                                    throw new IllegalStateException(
-                                            "Invalid JSON of followup questions",
-                                            e
-                                    );
-                                }
-                            })
-                            .map(list -> (ChatEvent) new FollowupsEvent(list))
-                            .onErrorResume(error -> {
-                                log.warn(
-                                        "Followups could not be generated for conversation {}",
-                                        conversationId,
-                                        error
-                                );
-
-                                return Flux.just(new FollowupsErrorEvent(
-                                        "Additional followups were not generated."
-                                ));
-                            });
-
-                    return Flux.concat(finalText, saveAnswer.thenMany(followups));
-                }))
-                .publishOn(Schedulers.boundedElastic())
-                .doFinally(_ -> {
-                    long totalTime = System.currentTimeMillis() - startTime;
-
-                    log.info("Total latency: {} ms", totalTime);
-                    log.info("Chunk count: {}", chunkCount.get());
-
-                    if (firstChunkTime.get() > 0) {
-                        long streamingTime = totalTime - firstChunkTime.get();
-                        log.info("Streaming duration: {} ms", streamingTime);
-                    }
-                })
-                .onErrorResume(err -> Flux.just(new ErrorEvent(err.getMessage())));
+                        if (firstChunkTime.get() > 0) {
+                            long streamingTime = totalTime - firstChunkTime.get();
+                            log.info("Streaming duration: {} ms", streamingTime);
+                        }
+                    });
+        });
     }
 
-    private List<ChatEvent> splitChunks(StringBuilder buffer, StringBuilder responseBuilder) {
-        List<ChatEvent> events = new ArrayList<>();
-        Optional<String> nextChunk = takeReadyChunk(buffer);
+    private Flux<ChatEvent> completeResponse(String conversationId,
+                                            ResponseChunkBuffer chunkBuffer,
+                                            FollowupMethod method,
+                                            List<VectorDatabaseDocument> context,
+                                            List<Message> lastMessages){
+        Flux<ChatEvent> finalText =
+                chunkBuffer.flush()
+                .<Flux<ChatEvent>>map(text ->
+                        Flux.just(new BotMessageChunk(text)))
+                .orElseGet(Flux::empty);
 
-        while (nextChunk.isPresent()) {
-            String text = nextChunk.get();
-            responseBuilder.append(text);
-            events.add(new BotMessageChunk(text));
-            nextChunk = takeReadyChunk(buffer);
-        }
+        String answer = chunkBuffer.getFullResponse();
+        Message botMessage = MessageFactory.createBotMessage(conversationId, answer);
 
-        return events;
-    }
+        Mono<Void> saveAnswer = Mono.fromRunnable(() -> sendMessage(botMessage)).subscribeOn(Schedulers.boundedElastic()).then();
 
-    private Optional<String> takeReadyChunk(StringBuilder buffer) {
-        if (buffer.length() < TARGET_CHUNK_SIZE) {
-            return Optional.empty();
-        }
+        Flux<ChatEvent> followups = Flux.defer(() ->followupsService.generateFollowups(method, answer, context, lastMessages))
+                .map(list -> (ChatEvent) new FollowupsEvent(list))
+                .onErrorResume(error -> {
+                    log.warn(
+                            "Followups could not be generated for conversation {}",
+                            conversationId,
+                            error
+                    );
 
-        int splitIndex = findLastSeparator(buffer);
+                    return Flux.just(new FollowupsErrorEvent(
+                            "Additional followups were not generated."
+                    ));
+                });
 
-        if (splitIndex < TARGET_CHUNK_SIZE && buffer.length() < MAX_BUFFER_SIZE) {
-            return Optional.empty();
-        }
-
-        if (splitIndex <= 0) {
-            String chunk = buffer.toString();
-            buffer.setLength(0);
-            return Optional.of(chunk);
-        }
-
-        String chunk = buffer.substring(0, splitIndex);
-        buffer.delete(0, splitIndex);
-        return Optional.of(chunk);
-    }
-
-    private int findLastSeparator(StringBuilder buffer) {
-        for (int index = buffer.length() - 1; index >= 0; index--) {
-            if (isSeparator(buffer.charAt(index))) {
-                return index + 1;
-            }
-        }
-
-        return -1;
-    }
-
-    private boolean isSeparator(char character) {
-        return Character.isWhitespace(character) || ",.;:!?)]}\"".indexOf(character) >= 0;
+        return Flux.concat(finalText, saveAnswer.thenMany(followups));
     }
 
     public Flux<ChatEvent> startAndStreamBotResponse(String userContent, FollowupMethod method, Degree level) {
-        Conversation conversation = startConversation();
-        ChatEvent convId = new ConversationStart(conversation.getId());
-        return Flux.concat(Flux.just(convId), streamBotResponse(conversation.getId(), userContent, method, level));
+        return Mono.fromCallable(this::startConversation)
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMapMany(conversation ->
+                        Flux.concat(
+                                Flux.<ChatEvent>just(new ConversationStart(conversation.getId())),
+                                streamBotResponse(conversation.getId(), userContent, method, level)
+                        )
+                )
+                .onErrorResume(error -> {
+                    log.warn("New conversation failed", error);
+
+                    return Flux.just(new ErrorEvent("Nie udało się utworzyć nowej rozmowy."));
+                });
     }
 
-    public Flux<String> generateFollowups(
-            FollowupMethod method,
-            String answer,
-            List<String> similarQuestions,
-            String category,
-            List<Message> history)
-    {
-        return switch (method) {
-            case PROMPT_ENGINEERING -> chatbotGateway.followupsWithPromptEngineering(answer, history);
-            case RAG -> chatbotGateway.followupsWithRAG(similarQuestions, history, answer);
-            case TEMPLATE_BASED -> chatbotGateway.followupsWithTemplates(category);
-        };
+    private PromptMessage preparePrompt(String conversationId, String query, Degree level){
+        Message userMessage = MessageFactory.createUserMessage(conversationId, query);
+        sendMessage(userMessage);
+
+        Conversation conversation = conversationRepository
+                .findById(conversationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conversation not found"));
+
+        List<Message> history = new ArrayList<>(conversation.getLastMessages(4));
+
+        String rewrittenQuery = chatbotGateway.rewrite(query, history);
+
+        List<VectorDatabaseDocument> documents =vectorDatabaseSearchGateway.findSimilarDocuments(rewrittenQuery, 30, level);
+        List<VectorDatabaseDocument> context = rerankerGateway.rerank(rewrittenQuery, documents).stream().limit(5).toList();
+
+        return new PromptMessage(rewrittenQuery, history, context);
     }
 }

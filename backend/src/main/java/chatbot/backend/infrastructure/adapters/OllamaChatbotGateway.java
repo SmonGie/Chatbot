@@ -16,6 +16,7 @@ import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Objects;
@@ -84,7 +85,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
     }
 
     @Override
-    public Flux<String> followupsWithPromptEngineering(String answer, List<Message> history) {
+    public Mono<String> followupsWithPromptEngineering(String answer, List<Message> history) {
         String messageHistory = formatHistory(history);
 
         String instruction =
@@ -110,7 +111,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
     }
 
     @Override
-    public Flux<String> followupsWithRAG(List<String> similarQuestions, List<Message> history, String answer) {
+    public Mono<String> followupsWithRAG(List<String> similarQuestions, List<Message> history, String answer) {
         String joinedQuestions = similarQuestions.stream()
                 .map(q -> "- " + q)
                 .collect(Collectors.joining("\n"));
@@ -143,7 +144,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
     }
 
     @Override
-    public Flux<String> followupsWithTemplates(String category) {
+    public Mono<String> followupsWithTemplates(String category) {
         TemplatesFollowup templateCategory =
                 TemplatesFollowup.fromCategory(category);
 
@@ -154,7 +155,7 @@ public class OllamaChatbotGateway implements ChatbotGateway {
                             .limit(8)
                             .toList()
             );
-            return Flux.just(json);
+            return Mono.just(json);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(
                     "Templates for followups could not be serialized into JSON format",
@@ -164,9 +165,9 @@ public class OllamaChatbotGateway implements ChatbotGateway {
     }
 
     @NonNull
-    private Flux<String> generateResponse(String instruction) {
-        return chatModel.stream(new Prompt(instruction))
-                .map(chatResponse -> Objects.requireNonNull(chatResponse.getResult().getOutput().getText()))
+    private Mono<String> generateResponse(String instruction) {
+        return Mono.defer(() -> chatModel.stream(new Prompt(instruction))
+                .mapNotNull(chatResponse -> chatResponse.getResult().getOutput().getText())
                 .reduce("", (result, chunk) -> result + chunk)
                 .map(text -> {
                     text = text.trim();
@@ -179,10 +180,9 @@ public class OllamaChatbotGateway implements ChatbotGateway {
                     }
 
                     return text.substring(start, end);
-                })
-                .flux()
-                .onErrorReturn("[]");
+                }));
     }
+
 
     private Prompt buildPrompt(PromptMessage promptTemp) {
         String systemPrompt =

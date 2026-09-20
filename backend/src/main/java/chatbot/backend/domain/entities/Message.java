@@ -2,23 +2,32 @@ package chatbot.backend.domain.entities;
 
 import chatbot.backend.domain.enums.Sender;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import java.time.Instant;
 import java.util.UUID;
 
 @Getter
-@Setter
 public class Message {
     @Id
     private String id;
-    private String conversationId;
-    private Sender sender;
-    private String content;
-    private Instant timestamp;
+    private final String conversationId;
+    private final Sender sender;
+    private final String content;
+    private final Instant timestamp;
 
-    Message(Sender sender, String content) {
+    Message(String conversationId, Sender sender, String content) {
+        if (conversationId == null || conversationId.isBlank()) {
+            throw new IllegalArgumentException("Conversation ID cannot be empty");
+        }
+        if (sender == null) {
+            throw new IllegalArgumentException("Message sender cannot be null");
+        }
+        if (content == null || content.isBlank()) {
+            throw new IllegalArgumentException("Message content cannot be empty");
+        }
+
         this.id = UUID.randomUUID().toString();
+        this.conversationId = conversationId;
         this.sender = sender;
         this.content = content;
         this.timestamp = Instant.now();
